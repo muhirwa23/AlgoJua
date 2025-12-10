@@ -25,260 +25,278 @@ export interface Article {
 export const articles: Article[] = [
   {
     id: "001",
-    title: "Whispers of Wisdom",
-    subtitle: "Finding clarity in the quiet moments of financial planning",
-    category: "Financing",
-    date: "Oct 16, 2024",
-    readTime: "5 min",
-    image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1920&q=80",
+    title: "The Rise of AI-Powered Developer Tools in 2025",
+    subtitle: "How AI copilots are reshaping the way we write code",
+    category: "Tools",
+    date: "Dec 8, 2024",
+    readTime: "6 min",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1920&q=80",
     author: {
-      name: "David Kim",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80",
-      bio: "Financial wellness writer and personal growth advocate",
+      name: "Alex Chen",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+      bio: "Senior Developer Advocate & Tech Writer",
     },
     content: {
-      introduction: "In a world of financial noise and conflicting advice, sometimes the wisest course of action is to listen to the whispers—those quiet moments of clarity that cut through the chaos. Financial planning isn't just about numbers; it's about understanding your values and aligning your resources with what truly matters.",
+      introduction: "The developer tooling landscape has undergone a massive transformation with the integration of AI. From code completion to entire feature generation, AI-powered tools are becoming indispensable for modern developers.",
       sections: [
         {
-          heading: "The Power of Quiet Reflection",
-          content: "Before making any major financial decision, we often rush to consume more information, read more articles, or seek more advice. Yet the most profound insights often come when we step back and simply reflect. Taking time for quiet contemplation allows us to connect with our deeper values and understand what financial security truly means to us—not what society tells us it should mean.",
+          heading: "Beyond Simple Autocomplete",
+          content: "Today's AI coding assistants go far beyond simple autocomplete. They understand context, can refactor code, write tests, and even explain complex codebases. Tools like GitHub Copilot, Cursor, and Cody are leading this revolution.",
         },
         {
-          heading: "Building Financial Awareness",
-          content: "True financial wisdom begins with awareness. This means honestly assessing where you are, understanding your patterns and behaviors around money, and recognizing the emotional drivers behind your financial decisions. It's not about judgment, but about clear-eyed observation. When we can see our financial reality clearly, we're empowered to make intentional changes.",
+          heading: "The Productivity Multiplier",
+          content: "Studies show developers using AI tools report 30-50% productivity gains. But it's not just about speed—it's about reducing cognitive load and letting developers focus on architecture and problem-solving rather than boilerplate.",
         },
         {
-          heading: "Small Steps, Lasting Change",
-          content: "The whispers of wisdom often guide us toward small, sustainable actions rather than dramatic overhauls. Perhaps it's automating a small savings contribution, or finally organizing your financial documents, or having that honest conversation about money with your partner. These quiet actions, consistently applied, create profound change over time.",
-        },
-        {
-          heading: "Values-Based Financial Planning",
-          content: "When we align our financial decisions with our core values, money becomes a tool for creating the life we want rather than a source of stress and confusion. Ask yourself: What do I truly value? How can my financial choices support those values? The answers to these questions are your compass in navigating financial decisions.",
+          heading: "What to Look For in 2025",
+          content: "Expect more specialized AI tools for specific frameworks, better integration with existing workflows, and improved understanding of enterprise codebases. The winners will be tools that enhance rather than replace developer judgment.",
         },
       ],
-      conclusion: "Financial wisdom isn't found in the loudest voices or the most complex strategies. It's discovered in quiet moments of reflection, in the gentle guidance of your values, and in the consistent application of simple, intentional actions. Listen to the whispers—they often speak the deepest truths.",
+      conclusion: "AI developer tools are here to stay. The key is learning to use them effectively while maintaining your core programming skills. Those who master this balance will have a significant competitive advantage.",
     },
-    tags: ["financial planning", "mindfulness", "personal finance", "values"],
+    tags: ["AI", "developer tools", "productivity", "GitHub Copilot"],
   },
   {
     id: "002",
-    title: "Ink-Stained Insights",
-    subtitle: "The art of journaling for a more intentional lifestyle",
-    category: "Lifestyle",
-    date: "Oct 23, 2024",
-    readTime: "6 min",
-    image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&q=80",
+    title: "Remote Tech Jobs: Where Companies Are Actually Hiring",
+    subtitle: "A breakdown of the hottest remote opportunities right now",
+    category: "Jobs",
+    date: "Dec 6, 2024",
+    readTime: "8 min",
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80",
     author: {
-      name: "Sofia Rodriguez",
+      name: "Sarah Mitchell",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80",
-      bio: "Creative writer and mindfulness practitioner",
+      bio: "Career Coach & Tech Recruiter",
     },
     content: {
-      introduction: "There's something profound about putting pen to paper—the way ink flows across the page, capturing thoughts that might otherwise evaporate. In our digital age, the practice of journaling offers a rare opportunity to slow down, reflect, and connect with ourselves in a tangible, meaningful way.",
+      introduction: "Despite some companies pulling back on remote work, the demand for remote tech talent remains strong. Here's where the opportunities are in late 2024 and early 2025.",
       sections: [
         {
-          heading: "Why Analog Matters",
-          content: "While digital tools have their place, there's neuroscience behind why handwriting engages our brain differently. The physical act of writing slows our thinking, allowing for deeper processing and reflection. It's a form of mindfulness in action, anchoring us in the present moment while we explore our inner landscape.",
+          heading: "Top Hiring Sectors",
+          content: "Fintech, healthtech, and AI startups are leading remote hiring. Companies in these sectors understand that top talent isn't concentrated in one city. They're offering competitive packages with full remote flexibility.",
         },
         {
-          heading: "Creating Your Practice",
-          content: "Your journaling practice doesn't need to be elaborate or time-consuming. Start with five minutes each morning or evening. Write freely without judgment—this isn't about perfect prose or profound insights. It's about showing up for yourself, creating space for reflection, and building a relationship with your thoughts and feelings.",
+          heading: "Skills in Highest Demand",
+          content: "Cloud infrastructure (AWS, GCP), AI/ML engineering, and full-stack development with modern frameworks like Next.js remain the most sought-after skills. DevOps and platform engineering roles are also seeing explosive growth.",
         },
         {
-          heading: "Prompts for Deeper Reflection",
-          content: "When you're not sure what to write, prompts can guide you: What am I grateful for today? What challenged me and what did I learn? What do I need more of in my life? What can I let go of? These questions invite introspection and help us identify patterns in our thoughts and behaviors.",
-        },
-        {
-          heading: "The Gift of Looking Back",
-          content: "One of journaling's greatest gifts reveals itself over time. Looking back through old entries, we see how we've grown, what we've overcome, and patterns we might want to change. This historical perspective offers wisdom we can't access in the present moment alone.",
+          heading: "How to Stand Out",
+          content: "Build in public. Contribute to open source. Create content about your work. Remote employers look for candidates who can communicate asynchronously and demonstrate initiative without constant supervision.",
         },
       ],
-      conclusion: "Journaling is more than record-keeping—it's a practice of self-discovery and intentional living. Those ink-stained pages become a map of your inner journey, a testament to your growth, and a tool for creating the life you envision. Start today, even if just for five minutes. Your future self will thank you.",
+      conclusion: "The remote job market is more competitive but also more mature. Focus on high-demand skills, build a strong online presence, and target companies with a genuine remote-first culture.",
     },
-    tags: ["journaling", "mindfulness", "self-reflection", "lifestyle"],
+    tags: ["remote work", "job hunting", "career", "hiring trends"],
   },
   {
     id: "003",
-    title: "Musings in Grayscale",
-    subtitle: "Finding beauty and clarity in life's neutral moments",
-    category: "Community",
+    title: "The Stack That's Dominating Startups in 2025",
+    subtitle: "Why TypeScript, Next.js, and Supabase are everywhere",
+    category: "Trends",
     date: "Dec 4, 2024",
     readTime: "5 min",
-    image: "https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=1920&q=80",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80",
     author: {
-      name: "Marcus Chen",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
-      bio: "Community builder and contemplative writer",
-    },
-    content: {
-      introduction: "We often seek the extremes—the peaks of joy, the depths of sorrow, the bright colors that define our experiences. But what about the in-between? The neutral moments, the grayscale of everyday life that makes up most of our existence? There's unexpected beauty and wisdom in these spaces.",
-      sections: [
-        {
-          heading: "The Overlooked Majority",
-          content: "Most of life isn't dramatic. It's morning coffee, routine commutes, quiet evenings, and ordinary conversations. We tend to overlook these moments, waiting for something 'significant' to happen. Yet these grayscale moments—when approached with presence and appreciation—contain their own quiet richness.",
-        },
-        {
-          heading: "Community in the Mundane",
-          content: "Some of the deepest community connections happen not in grand gestures but in ordinary moments: the neighbor who waves each morning, the barista who remembers your order, the colleague who checks in during a regular Tuesday. These small, repeated interactions create the texture of belonging.",
-        },
-        {
-          heading: "Finding Clarity in Neutrality",
-          content: "When we're not caught up in emotional extremes, we can see more clearly. The grayscale moments offer perspective—a chance to observe our lives without the distortion of intense emotion. This clarity helps us make better decisions and understand what truly matters to us.",
-        },
-        {
-          heading: "Cultivating Appreciation",
-          content: "Learning to appreciate the neutral doesn't mean settling for less—it means expanding our capacity for contentment. It's recognizing that a quiet Sunday afternoon, a simple meal with friends, or a walk without destination has its own value. This appreciation makes us resilient and less dependent on external circumstances for our sense of wellbeing.",
-        },
-      ],
-      conclusion: "Life in grayscale isn't boring—it's the canvas on which everything else appears. By learning to appreciate these neutral moments and the community connections within them, we enrich our entire experience. The next time you find yourself in an 'ordinary' moment, pause and look closer. You might be surprised by what you find.",
-    },
-    tags: ["mindfulness", "community", "presence", "contentment"],
-  },
-  {
-    id: "W001",
-    title: "Finding Balance: How to Create a Sustainable Self-Care Routine",
-    subtitle: "Developing practices that actually stick",
-    category: "Wellness",
-    date: "Mar 19, 2025",
-    readTime: "7 min",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1920&q=80",
-    author: {
-      name: "Emma Thompson",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
-      bio: "Certified wellness coach and holistic health practitioner",
-    },
-    content: {
-      introduction: "Self-care has become a buzzword, often associated with spa days and indulgent treats. While these have their place, true self-care is about sustainable practices that support your physical, mental, and emotional wellbeing consistently—not just when you're burned out.",
-      sections: [
-        {
-          heading: "Understanding Your Needs",
-          content: "Before building a self-care routine, you need to understand what you actually need. Are you lacking physical movement, mental rest, emotional processing, or social connection? Self-care isn't one-size-fits-all. Take time to honestly assess where you're depleted and what would genuinely nourish you.",
-        },
-        {
-          heading: "Start Small and Specific",
-          content: "The biggest mistake people make with self-care is trying to overhaul everything at once. Instead, start with one small, specific practice. Maybe it's five minutes of stretching each morning, or drinking a glass of water before coffee, or spending ten minutes outside daily. Small, consistent actions create lasting change.",
-        },
-        {
-          heading: "The Four Pillars of Wellness",
-          content: "A balanced self-care routine addresses four key areas: physical health (movement, nutrition, sleep), mental health (stress management, learning, rest), emotional health (processing feelings, connection, creativity), and spiritual health (meaning, purpose, values alignment). You don't need elaborate practices in each area—just intentional attention.",
-        },
-        {
-          heading: "Making It Sustainable",
-          content: "Sustainability comes from integration, not addition. Instead of adding more to your already full schedule, look for ways to integrate self-care into existing routines. Take walking meetings, practice mindful eating during meals you already eat, or turn your commute into a time for podcasts that inspire you.",
-        },
-        {
-          heading: "When Self-Care Feels Selfish",
-          content: "Many people struggle with guilt around self-care, especially caregivers. Remember: you can't pour from an empty cup. Taking care of yourself isn't selfish—it's necessary for showing up as your best self for others. Your wellbeing matters, not just as a means to serve others, but as an end in itself.",
-        },
-      ],
-      conclusion: "A sustainable self-care routine isn't about perfection or elaborate practices. It's about consistent, intentional actions that support your wellbeing across all dimensions of health. Start small, be patient with yourself, and remember that self-care is a practice, not a destination.",
-    },
-    tags: ["self-care", "wellness", "mindfulness", "sustainable living"],
-  },
-  {
-    id: "T001",
-    title: "The Art of Slow Travel: Embracing Local Experiences",
-    subtitle: "Discovering depth over distance in your journeys",
-    category: "Travel",
-    date: "Mar 15, 2025",
-    readTime: "8 min",
-    image: "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80",
-    author: {
-      name: "Marcus Chen",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
-      bio: "Slow travel advocate and cultural immersion specialist",
-    },
-    content: {
-      introduction: "In an age of whirlwind tours and bucket-list chasing, slow travel offers a radical alternative: staying longer, going deeper, and truly experiencing a place rather than just seeing it. It's not about how many countries you've visited, but how deeply you've connected with the places you've been.",
-      sections: [
-        {
-          heading: "What Is Slow Travel?",
-          content: "Slow travel is a philosophy that prioritizes depth over breadth, quality over quantity. It means staying in fewer places for longer periods, developing routines in new locations, shopping at local markets, and building relationships with locals. It's about experiencing a destination as a temporary resident rather than a tourist passing through.",
-        },
-        {
-          heading: "The Benefits of Slowing Down",
-          content: "When you slow down, travel becomes richer and more meaningful. You notice details you'd miss when rushing from sight to sight. You have time for spontaneous conversations, unexpected discoveries, and genuine cultural exchange. You also return home less exhausted and with deeper memories than a photo collection of landmarks.",
-        },
-        {
-          heading: "Practical Steps for Slow Travel",
-          content: "Start by choosing one place and staying at least a week—two or more is even better. Rent an apartment instead of staying in hotels. Shop at local markets, take local transportation, and establish routines like a regular cafe or morning walk. Say yes to invitations from locals. Allow for unplanned time in your schedule.",
-        },
-        {
-          heading: "Overcoming FOMO",
-          content: "The biggest challenge of slow travel is overcoming the fear of missing out. You might not see every museum or landmark. That's okay. You're choosing depth over breadth, experience over completion. Remember: the goal isn't to check off a list—it's to truly experience and understand a place.",
-        },
-        {
-          heading: "Environmental and Cultural Benefits",
-          content: "Slow travel is inherently more sustainable. Fewer flights, more local spending, less overtourism impact. It's also more respectful to local communities. When you stay longer and engage more deeply, you contribute more meaningfully to local economies and build bridges of understanding between cultures.",
-        },
-      ],
-      conclusion: "Slow travel isn't just a way of moving through the world—it's a mindset that values presence, connection, and understanding. In slowing down, we paradoxically experience more. The next time you travel, consider going fewer places and staying longer. You might discover that the journey becomes infinitely richer.",
-    },
-    tags: ["slow travel", "sustainable travel", "cultural immersion", "mindful exploration"],
-  },
-  {
-    id: "G001",
-    title: "Minimalist Living: Creating Space for What Matters Most",
-    subtitle: "The freedom found in letting go",
-    category: "Growth",
-    date: "Mar 10, 2025",
-    readTime: "6 min",
-    image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1920&q=80",
-    author: {
-      name: "David Kim",
+      name: "Jordan Lee",
       avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80",
-      bio: "Minimalism advocate and intentional living coach",
+      bio: "Startup CTO & Technical Advisor",
     },
     content: {
-      introduction: "Minimalism isn't about having less for the sake of having less—it's about making room for more: more clarity, more freedom, more focus on what truly matters. In our consumer-driven culture, choosing to live with less is a radical act of intentionality.",
+      introduction: "A clear tech stack pattern has emerged among successful startups: TypeScript everywhere, Next.js for the frontend, and Supabase or similar for the backend. Here's why this combination is winning.",
       sections: [
         {
-          heading: "Beyond the Aesthetic",
-          content: "Minimalism has been co-opted by a certain aesthetic—white walls, sparse furniture, perfectly curated spaces. But true minimalism is about values, not visuals. It's about removing excess so you can focus on what adds value to your life. Your minimalist life might look different from someone else's, and that's exactly as it should be.",
+          heading: "TypeScript: Non-Negotiable",
+          content: "Type safety isn't a nice-to-have anymore—it's expected. TypeScript catches bugs early, improves developer experience with better autocomplete, and makes codebases more maintainable as teams grow.",
         },
         {
-          heading: "The Process of Letting Go",
-          content: "Minimalism is as much psychological as it is physical. As you sort through possessions, you're also examining attachments, identities, and habits. That box of college textbooks isn't just books—it's who you used to be. Learning to let go of physical items helps us practice letting go in other areas of life too.",
+          heading: "Next.js: The Full Package",
+          content: "Server components, API routes, edge functions, and excellent DX. Next.js has become the default choice for React apps because it solves so many problems out of the box while remaining flexible.",
         },
         {
-          heading: "Quality Over Quantity",
-          content: "Minimalism isn't about deprivation—it's about being selective. Instead of ten mediocre pairs of shoes, keep three you love. Instead of a closet full of clothes you never wear, maintain a smaller collection of pieces that make you feel great. When you reduce quantity, you can increase quality.",
-        },
-        {
-          heading: "Mental and Digital Minimalism",
-          content: "Physical clutter is just one dimension. Consider your commitments, your schedule, your digital life. Do you need to be on five social media platforms? Must you say yes to every invitation? Minimalism applies to time and attention too. Protect your mental space as carefully as your physical space.",
-        },
-        {
-          heading: "The Freedom of Less",
-          content: "Here's what minimalism creates: less time spent cleaning and organizing, fewer decisions to make, less financial pressure, more mental clarity, greater focus on relationships and experiences. In removing what doesn't matter, we make room for what does. That's the true gift of minimalism.",
+          heading: "Supabase: Backend Without the Pain",
+          content: "PostgreSQL, authentication, real-time subscriptions, and storage—all with an excellent developer experience. Supabase lets small teams ship features that would take months to build from scratch.",
         },
       ],
-      conclusion: "Minimalism is a journey, not a destination. You don't need to purge everything or live in an empty room. Start with one drawer, one category, one area of life. As you experience the lightness that comes from letting go, you'll naturally want to continue. What you'll discover isn't just less stuff—it's more freedom, clarity, and space for what truly matters.",
+      conclusion: "This stack isn't about hype—it's about pragmatic choices that maximize developer productivity and minimize infrastructure complexity. If you're starting something new, this is a safe bet.",
     },
-    tags: ["minimalism", "intentional living", "simplicity", "personal growth"],
+    tags: ["TypeScript", "Next.js", "Supabase", "tech stack", "startups"],
+  },
+  {
+    id: "004",
+    title: "Breaking Into Tech: A No-BS Guide for Career Changers",
+    subtitle: "What actually works when you're starting from zero",
+    category: "Career",
+    date: "Dec 2, 2024",
+    readTime: "10 min",
+    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1920&q=80",
+    author: {
+      name: "Marcus Johnson",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&q=80",
+      bio: "Self-taught Developer & Mentor",
+    },
+    content: {
+      introduction: "I switched from finance to software engineering at 32. No CS degree, no bootcamp. Here's the unfiltered truth about what it takes to break into tech.",
+      sections: [
+        {
+          heading: "Skip the Tutorial Hell",
+          content: "Stop watching tutorials. Build things. Break things. The fastest learners I know spent 20% of their time learning and 80% building actual projects. Tutorials give you false confidence.",
+        },
+        {
+          heading: "The Portfolio That Gets Interviews",
+          content: "One genuinely useful project beats ten todo apps. Build something that solves a real problem—even if it's just your own. Deploy it. Get users. This demonstrates more than any certification.",
+        },
+        {
+          heading: "Networking Isn't Optional",
+          content: "Most jobs come through connections. Engage on Twitter/X, join Discord communities, attend local meetups. Help others. The tech community is surprisingly welcoming if you show genuine interest.",
+        },
+        {
+          heading: "Your First Job Won't Be Perfect",
+          content: "Take the first opportunity that lets you write code professionally. Learn aggressively for 1-2 years, then reassess. Your trajectory matters more than your starting point.",
+        },
+      ],
+      conclusion: "Breaking into tech is hard but absolutely doable. Focus on building, networking, and staying consistent. The path isn't linear, but every week you're coding is a week closer to your goal.",
+    },
+    tags: ["career change", "self-taught", "getting started", "portfolio"],
+  },
+  {
+    id: "005",
+    title: "10 AI Tools Every Developer Should Try This Week",
+    subtitle: "From code review to documentation, these tools ship faster",
+    category: "Tools",
+    date: "Nov 30, 2024",
+    readTime: "7 min",
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1920&q=80",
+    author: {
+      name: "Emily Zhang",
+      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&q=80",
+      bio: "Developer Productivity Expert",
+    },
+    content: {
+      introduction: "The AI tool landscape is overwhelming. I've tested dozens so you don't have to. Here are the 10 that have actually made it into my daily workflow.",
+      sections: [
+        {
+          heading: "Code Assistants",
+          content: "Cursor has become my default editor—it's VSCode with AI superpowers. For existing VSCode users, Continue.dev offers similar capabilities as an extension. Both understand your codebase context remarkably well.",
+        },
+        {
+          heading: "Documentation & Writing",
+          content: "Mintlify for docs, Grammarly for technical writing, and ChatGPT for brainstorming API designs. The combo saves hours on every documentation sprint.",
+        },
+        {
+          heading: "Testing & Code Review",
+          content: "CodeRabbit for automated PR reviews, Codium for AI-generated tests. They catch issues I miss and suggest edge cases I wouldn't have thought of.",
+        },
+        {
+          heading: "Debugging & Monitoring",
+          content: "Sentry's AI error analysis and Raycast for quick AI queries while debugging. Both integrate seamlessly without disrupting flow.",
+        },
+      ],
+      conclusion: "Don't try to adopt everything at once. Pick one or two tools that address your biggest pain points, master them, then expand. The best tool is the one you'll actually use.",
+    },
+    tags: ["AI tools", "productivity", "developer experience", "automation"],
+  },
+  {
+    id: "006",
+    title: "Tech Layoffs Are Slowing—Here's What the Data Shows",
+    subtitle: "Q4 2024 hiring trends point to market recovery",
+    category: "News",
+    date: "Nov 28, 2024",
+    readTime: "5 min",
+    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1920&q=80",
+    author: {
+      name: "David Park",
+      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&q=80",
+      bio: "Tech Industry Analyst",
+    },
+    content: {
+      introduction: "After two years of uncertainty, the data is finally showing positive signals. Tech hiring is stabilizing, and some sectors are growing again.",
+      sections: [
+        {
+          heading: "The Numbers",
+          content: "Layoffs in Q4 2024 are down 60% compared to Q1 2023. More importantly, job postings for engineering roles are up 15% quarter-over-quarter for the first time since 2022.",
+        },
+        {
+          heading: "Where Growth Is Happening",
+          content: "AI infrastructure, cybersecurity, and climate tech are seeing the strongest hiring. Traditional SaaS is stable but not growing. Consumer tech remains cautious.",
+        },
+        {
+          heading: "What This Means for Job Seekers",
+          content: "Competition is still fierce, but opportunities are real. Companies are being more selective, which means stronger candidates have more leverage. Salaries are stabilizing rather than declining.",
+        },
+      ],
+      conclusion: "The tech job market isn't back to 2021 levels, and probably never will be. But the correction is over. If you've been waiting for the right time to job search, that time is now.",
+    },
+    tags: ["layoffs", "job market", "industry trends", "hiring"],
+  },
+  {
+    id: "007",
+    title: "Rust is Eating the World—And You Should Pay Attention",
+    subtitle: "Why the fastest-growing language matters for your career",
+    category: "Trends",
+    date: "Nov 25, 2024",
+    readTime: "6 min",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1920&q=80",
+    author: {
+      name: "Alex Chen",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+      bio: "Senior Developer Advocate & Tech Writer",
+    },
+    content: {
+      introduction: "Rust has moved beyond systems programming. It's now used in web backends, cloud infrastructure, and even frontend tooling. Here's why it's worth learning in 2025.",
+      sections: [
+        {
+          heading: "The Adoption Wave",
+          content: "Microsoft, Google, AWS, Meta, and Discord are all investing heavily in Rust. The Linux kernel now accepts Rust code. Major infrastructure tools like Turbopack and Biome are written in Rust.",
+        },
+        {
+          heading: "Why Companies Love It",
+          content: "Memory safety without garbage collection means fewer production bugs and better performance. For companies handling scale, this translates directly to cost savings and reliability.",
+        },
+        {
+          heading: "The Learning Curve Reality",
+          content: "Yes, Rust is harder to learn than JavaScript or Python. The borrow checker takes time to internalize. But the payoff is code that's faster, safer, and more maintainable long-term.",
+        },
+      ],
+      conclusion: "You don't need to become a Rust expert overnight. But understanding the language and its ecosystem will be increasingly valuable. Start with small CLI tools and expand from there.",
+    },
+    tags: ["Rust", "programming languages", "career growth", "systems programming"],
+  },
+  {
+    id: "008",
+    title: "The Complete Guide to Negotiating Your Tech Offer",
+    subtitle: "Scripts, strategies, and data to maximize your comp",
+    category: "Career",
+    date: "Nov 22, 2024",
+    readTime: "12 min",
+    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1920&q=80",
+    author: {
+      name: "Sarah Mitchell",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80",
+      bio: "Career Coach & Tech Recruiter",
+    },
+    content: {
+      introduction: "I've helped over 200 engineers negotiate their offers. The difference between negotiating and not? Often $20-50K in total compensation. Here's exactly how to do it.",
+      sections: [
+        {
+          heading: "Know Your Worth",
+          content: "Use levels.fyi, Glassdoor, and Blind to research comp ranges. Know the band for your level at the specific company. Come with data, not feelings.",
+        },
+        {
+          heading: "The Script That Works",
+          content: "Express enthusiasm first. Then: 'Based on my research and competing offers, I was hoping we could discuss the total compensation. I'm looking for [X] in base salary and [Y] in equity.' Be specific.",
+        },
+        {
+          heading: "What's Negotiable",
+          content: "Base salary, signing bonus, equity, start date, remote work terms, and title are all on the table. Even if they say salary is fixed, other components often aren't.",
+        },
+        {
+          heading: "Common Mistakes",
+          content: "Accepting immediately, not negotiating at all, or being adversarial. Companies expect negotiation. A polite, data-driven ask rarely loses an offer and often gains significant value.",
+        },
+      ],
+      conclusion: "Negotiation is uncomfortable but learnable. Even a modest improvement compounds over your career. Practice the script, do your research, and remember—they already want to hire you.",
+    },
+    tags: ["negotiation", "salary", "compensation", "career advice"],
   },
 ];
-
-export function getArticleById(id: string): Article | undefined {
-  return articles.find(article => article.id === id);
-}
-
-export function getRelatedArticles(currentId: string, limit: number = 3): Article[] {
-  const currentArticle = getArticleById(currentId);
-  if (!currentArticle) return articles.slice(0, limit);
-  
-  // Get articles from the same category, excluding current
-  const related = articles.filter(
-    article => article.id !== currentId && article.category === currentArticle.category
-  );
-  
-  // If not enough from same category, add others
-  if (related.length < limit) {
-    const others = articles.filter(
-      article => article.id !== currentId && article.category !== currentArticle.category
-    );
-    return [...related, ...others].slice(0, limit);
-  }
-  
-  return related.slice(0, limit);
-}
