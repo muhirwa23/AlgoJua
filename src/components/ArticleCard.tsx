@@ -12,14 +12,13 @@ interface ArticleCardProps {
 const ArticleCard = ({ id, title, category, date, image, size = "small" }: ArticleCardProps) => {
   const getCategoryClass = (cat: string) => {
     const normalized = cat.toLowerCase();
-    if (normalized.includes("financ")) return "tag-financing";
-    if (normalized.includes("lifestyle")) return "tag-lifestyle";
-    if (normalized.includes("community")) return "tag-community";
-    if (normalized.includes("wellness")) return "tag-wellness";
-    if (normalized.includes("travel")) return "tag-travel";
-    if (normalized.includes("creativ")) return "tag-creativity";
-    if (normalized.includes("growth")) return "tag-growth";
-    return "tag-lifestyle";
+    if (normalized.includes("job")) return "tag-jobs";
+    if (normalized.includes("tool")) return "tag-tools";
+    if (normalized.includes("trend")) return "tag-trends";
+    if (normalized.includes("news")) return "tag-news";
+    if (normalized.includes("opportunit")) return "tag-opportunities";
+    if (normalized.includes("career")) return "tag-career";
+    return "tag-tools";
   };
 
   return (
