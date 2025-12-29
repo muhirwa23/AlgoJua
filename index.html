@@ -2,27 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TechPulse - Tech Jobs, Tools & Trends for the Future</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <!-- Disable favicon (no tab icon) -->
+      <link rel="icon" href="data:," />
+      <link rel="shortcut icon" href="data:," />
+    <title>Algo Jua - Tech Jobs, Tools & Trends for the Future</title>
     <meta name="description" content="Your go-to source for tech job opportunities, emerging tools, industry trends, and career insights. Stay ahead in the fast-moving tech world." />
-    <meta name="author" content="TechPulse" />
+    <meta name="author" content="Algo Jua" />
     <meta name="keywords" content="tech jobs, tech trends, developer tools, career opportunities, software engineering, AI tools, startup jobs" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <meta property="og:title" content="TechPulse - Tech Jobs, Tools & Trends" />
+    <meta property="og:title" content="Algo Jua - Tech Jobs, Tools & Trends" />
     <meta property="og:description" content="Your go-to source for tech job opportunities, emerging tools, industry trends, and career insights." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@techpulse" />
+    <meta name="twitter:site" content="@alogojua" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function(){
+        const dc = function(e){if(e.keyCode===123||(e.ctrlKey&&e.shiftKey&&(e.keyCode===73||e.keyCode===74||e.keyCode===67))||(e.ctrlKey&&e.keyCode===85)){e.preventDefault();return false;}};
+        document.addEventListener('keydown',dc);
+        document.addEventListener('contextmenu',function(e){e.preventDefault();return false;});
+        const devtools={open:false};
+        const threshold=160;
+        setInterval(function(){
+          if(window.outerWidth-window.innerWidth>threshold||window.outerHeight-window.innerHeight>threshold){
+            if(!devtools.open){devtools.open=true;console.clear();console.log('%cStop!','color:red;font-size:50px;font-weight:bold');console.log('%cThis browser feature is for developers.','font-size:18px');}
+          }else{devtools.open=false;}
+        },500);
+        (function(){const c=console;const m=['log','warn','error','info','debug','table','trace','dir','group','groupEnd','time','timeEnd','assert','count'];if(window.location.hostname!=='localhost'&&!window.location.hostname.includes('127.0.0.1')){m.forEach(function(n){c[n]=function(){};});}})();
+      })();
+    </script>
   </body>
 </html>

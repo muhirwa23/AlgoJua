@@ -1,25 +1,79 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { articles, Article } from "@/data/articles";
+import { postsApi, type Post } from "@/lib/api";
+
+interface Article {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: string;
+  date: string;
+  readTime: string;
+  image: string;
+  author: {
+    name: string;
+    avatar: string;
+    bio: string;
+  };
+  tags: string[];
+}
 
 const SearchDialog = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      const loadPosts = async () => {
+        setIsLoading(true);
+        try {
+          const fetchedPosts = await postsApi.fetchAll();
+          setPosts(fetchedPosts);
+        } catch (error) {
+          console.error('Failed to load posts for search:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadPosts();
+    }
+  }, [open]);
+
+  const articles: Article[] = useMemo(() => 
+    posts.map(post => ({
+      id: post.id,
+      title: post.title,
+      subtitle: post.subtitle || '',
+      category: post.category,
+      date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      readTime: post.read_time,
+      image: post.image_url,
+      author: {
+        name: post.author_name,
+        avatar: post.author_avatar,
+        bio: post.author_bio,
+      },
+      tags: post.tags,
+    })),
+    [posts]
+  );
 
   // Extract unique categories and authors
   const categories = useMemo(() => 
     [...new Set(articles.map(a => a.category))].sort(),
-    []
+    [articles]
   );
   
   const authors = useMemo(() => 
     [...new Set(articles.map(a => a.author.name))].sort(),
-    []
+    [articles]
   );
 
   // Filter articles based on search criteria
@@ -37,7 +91,7 @@ const SearchDialog = () => {
       
       return matchesQuery && matchesCategory && matchesAuthor;
     });
-  }, [query, selectedCategory, selectedAuthor]);
+  }, [query, selectedCategory, selectedAuthor, articles]);
 
   const clearFilters = () => {
     setQuery("");

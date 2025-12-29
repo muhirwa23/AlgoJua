@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- News articles should be dynamically generated -->
+  <!-- This template shows the required structure for Google News -->
+  <!-- Articles older than 2 days are automatically excluded by Google News -->
+</urlset>

@@ -6,16 +6,21 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import Wellness from "./pages/Wellness";
-import Travel from "./pages/Travel";
+import Jobs from "./pages/Jobs";
+import JobDetails from "./pages/JobDetails";
+
 import Creativity from "./pages/Creativity";
 import Growth from "./pages/Growth";
 import About from "./pages/About";
+
 import Authors from "./pages/Authors";
 import Contact from "./pages/Contact";
 import StyleGuide from "./pages/StyleGuide";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
+import AggregatorDashboard from "./pages/AggregatorDashboard";
 
 const queryClient = new QueryClient();
 
@@ -28,8 +33,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/article/:id" element={<Article />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/wellness" element={<Wellness />} />
-          <Route path="/travel" element={<Travel />} />
           <Route path="/creativity" element={<Creativity />} />
           <Route path="/growth" element={<Growth />} />
           <Route path="/about" element={<About />} />
@@ -38,6 +44,8 @@ const App = () => (
           <Route path="/style-guide" element={<StyleGuide />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/aggregator-dashboard" element={<AggregatorDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

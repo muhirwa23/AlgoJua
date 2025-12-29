@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TechPulse Design System - Modern Gen-Z Tech Aesthetic */
+/* Algo Jua Design System - Modern Gen-Z Tech Aesthetic */
 
 @layer base {
   :root {
@@ -130,7 +130,10 @@
 @layer utilities {
   /* Glassmorphism card */
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50 rounded-2xl;
+    @apply border border-border/50 rounded-2xl;
+    background-color: hsl(var(--card) / 0.6);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
   }
 
   /* Gradient border effect */
@@ -163,7 +166,10 @@
   }
 
   .pill-nav {
-    @apply rounded-full bg-[hsl(var(--surface-elevated))] backdrop-blur-xl border border-border/50;
+    @apply rounded-full backdrop-blur-xl border border-border/50;
+    background-color: hsl(var(--surface-elevated));
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
   }
 
   /* Neon glow button */

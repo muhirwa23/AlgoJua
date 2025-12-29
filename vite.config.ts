@@ -6,11 +6,18 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
+    // Bind to IPv4 to avoid HMR websocket issues when visiting via 127.0.0.1
+    host: "127.0.0.1",
     port: 8080,
+    hmr: {
+      host: "127.0.0.1",
+      port: 8080,
+    },
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react()].filter(Boolean),
   resolve: {
+    // Ensure a single React instance (prevents "Invalid hook call")
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },

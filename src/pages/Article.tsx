@@ -1,23 +1,105 @@
+import { useState, useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Header from "@/components/Header";
 import ArticleCard from "@/components/ArticleCard";
-import { articles } from "@/data/articles";
-
-const getArticleById = (id: string) => articles.find(a => a.id === id);
-const getRelatedArticles = (id: string) => articles.filter(a => a.id !== id).slice(0, 3);
+import { postsApi, type Post } from "@/lib/api";
 import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
-  const article = id ? getArticleById(id) : undefined;
-  
-  if (!article) {
-    return <Navigate to="/404" replace />;
+  const [post, setPost] = useState<Post | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    const loadPost = async () => {
+      if (!id) {
+        setNotFound(true);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const fetchedPost = await postsApi.fetchById(id);
+        if (!fetchedPost) {
+          setNotFound(true);
+        } else {
+          setPost(fetchedPost);
+          
+          const allPosts = await postsApi.fetchAll();
+          const related = allPosts
+            .filter(p => p.id !== id && p.category === fetchedPost.category)
+            .slice(0, 3);
+          setRelatedPosts(related);
+        }
+      } catch (error) {
+        console.error('Failed to load post:', error);
+        setNotFound(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPost();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-slate-800 rounded w-3/4 mx-auto"></div>
+            <div className="h-4 bg-slate-800 rounded w-1/2 mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const relatedArticles = getRelatedArticles(article.id);
+  if (notFound || !post) {
+    return <Navigate to="/" replace />;
+  }
+
+  const article = {
+    id: post.id,
+    title: post.title,
+    subtitle: post.subtitle || '',
+    category: post.category,
+    date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTime: post.read_time,
+    image: post.image_url,
+    author: {
+      name: post.author_name,
+      avatar: post.author_avatar,
+      bio: post.author_bio,
+    },
+    content: {
+      introduction: post.content_introduction || '',
+      sections: post.content_sections,
+      conclusion: post.content_conclusion || '',
+    },
+    tags: post.tags,
+  };
+
+  const relatedArticles = relatedPosts.map(p => ({
+    id: p.id,
+    title: p.title,
+    subtitle: p.subtitle || '',
+    category: p.category,
+    date: new Date(p.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTime: p.read_time,
+    image: p.image_url,
+    author: {
+      name: p.author_name,
+      avatar: p.author_avatar,
+      bio: p.author_bio,
+    },
+    tags: p.tags,
+  }));
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);

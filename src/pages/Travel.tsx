@@ -1,11 +1,41 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import ArticleCard from "@/components/ArticleCard";
-import { articles } from "@/data/articles";
+import { postsApi, type Post } from "@/lib/api";
 
 const Travel = () => {
-  const travelArticles = articles.filter(article => 
-    article.category.toLowerCase() === "travel"
-  );
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const fetchedPosts = await postsApi.fetchByCategory("Travel");
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error('Failed to load travel posts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadPosts();
+  }, []);
+
+  const travelArticles = posts.map(post => ({
+    id: post.id,
+    title: post.title,
+    subtitle: post.subtitle || '',
+    category: post.category,
+    date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTime: post.read_time,
+    image: post.image_url,
+    author: {
+      name: post.author_name,
+      avatar: post.author_avatar,
+      bio: post.author_bio,
+    },
+    tags: post.tags,
+  }));
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
@@ -23,16 +53,28 @@ const Travel = () => {
           </p>
         </div>
 
-        {/* Articles Grid */}
-        <section>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {travelArticles.map((article, index) => (
-              <div key={article.id} className={`animate-slide-up stagger-${Math.min(index + 2, 6)}`}>
-                <ArticleCard {...article} />
-              </div>
-            ))}
-          </div>
-        </section>
+          {/* Articles Grid */}
+          <section>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {isLoading ? (
+                Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="animate-pulse">
+                    <div className="h-64 bg-slate-800 rounded-lg"></div>
+                  </div>
+                ))
+              ) : travelArticles.length > 0 ? (
+                travelArticles.map((article, index) => (
+                  <div key={article.id} className={`animate-slide-up stagger-${Math.min(index + 2, 6)}`}>
+                    <ArticleCard {...article} />
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-muted-foreground">No travel articles yet.</p>
+                </div>
+              )}
+            </div>
+          </section>
 
         {/* Travel Philosophy */}
         <section className="mt-16 rounded-2xl bg-card p-8 md:p-12">

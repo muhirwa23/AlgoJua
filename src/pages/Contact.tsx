@@ -1,3 +1,4 @@
+import type * as React from "react";
 import Header from "@/components/Header";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
