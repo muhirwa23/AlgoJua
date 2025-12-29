@@ -6,12 +6,11 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    // Bind to IPv4 to avoid HMR websocket issues when visiting via 127.0.0.1
     host: "127.0.0.1",
-    port: 8080,
+    port: 5173,
     hmr: {
       host: "127.0.0.1",
-      port: 8080,
+      port: 5173,
     },
   },
   plugins: [react()].filter(Boolean),
