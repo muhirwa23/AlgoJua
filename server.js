@@ -430,8 +430,19 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid request' });
     }
     
-    const passwordHash = crypto.createHash('sha256').update(password).digest();
-    const envHash = crypto.createHash('sha256').update((process.env.ADMIN_PASSWORD || '').trim()).digest();
+    const trimmedInput = password.trim();
+    const trimmedEnv = (process.env.ADMIN_PASSWORD || '').trim();
+
+    // Log for debugging on Vercel (safe: only lengths and existence)
+    console.log('Admin login attempt details:', {
+      hasEnvPass: !!process.env.ADMIN_PASSWORD,
+      inputLen: trimmedInput.length,
+      envLen: trimmedEnv.length,
+      match: trimmedInput === trimmedEnv
+    });
+
+    const passwordHash = crypto.createHash('sha256').update(trimmedInput).digest();
+    const envHash = crypto.createHash('sha256').update(trimmedEnv).digest();
     const isValid = crypto.timingSafeEqual(passwordHash, envHash);
     
     if (!isValid) {
