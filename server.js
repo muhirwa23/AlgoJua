@@ -1138,8 +1138,10 @@ export default app;
 const PORT = parseInt(process.env.PORT || '3001');
 const HOST = process.env.HOST || '0.0.0.0';
 
+let server;
+
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  const server = app.listen(PORT, HOST, () => {
+  server = app.listen(PORT, HOST, () => {
     log('info', `API server running on ${HOST}:${PORT}`, { port: PORT, host: HOST, env: NODE_ENV });
   });
 
@@ -1150,18 +1152,28 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
 const gracefulShutdown = async (signal) => {
   log('info', `${signal} received, starting graceful shutdown`);
   
-  server.close(async () => {
-    log('info', 'HTTP server closed');
-    
+  if (server) {
+    server.close(async () => {
+      log('info', 'HTTP server closed');
+      
+      try {
+        await pool.end();
+        log('info', 'Database pool closed');
+      } catch (err) {
+        log('error', 'Error closing database pool', { error: err.message });
+      }
+      
+      process.exit(0);
+    });
+  } else {
     try {
       await pool.end();
       log('info', 'Database pool closed');
     } catch (err) {
       log('error', 'Error closing database pool', { error: err.message });
     }
-    
     process.exit(0);
-  });
+  }
 
   setTimeout(() => {
     log('error', 'Forced shutdown after timeout');
