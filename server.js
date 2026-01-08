@@ -65,7 +65,7 @@ app.disable('x-powered-by');
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000'];
+  : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000', 'https://algo-jua.netlify.app'];
 
 app.use(cors({
   origin: (origin, callback) => {
