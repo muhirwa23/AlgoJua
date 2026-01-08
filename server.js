@@ -426,7 +426,7 @@ app.post('/api/auth/login', async (req, res) => {
     
     const isValid = crypto.timingSafeEqual(
       Buffer.from(password.padEnd(100)),
-      Buffer.from((process.env.ADMIN_PASSWORD || '').padEnd(100))
+      Buffer.from((process.env.ADMIN_PASSWORD || '').trim().padEnd(100))
     );
     
     if (!isValid) {
@@ -1116,15 +1116,20 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
+// Export app for serverless deployment
+export default app;
+
 const PORT = parseInt(process.env.PORT || '3001');
 const HOST = process.env.HOST || '0.0.0.0';
 
-const server = app.listen(PORT, HOST, () => {
-  log('info', `API server running on ${HOST}:${PORT}`, { port: PORT, host: HOST, env: NODE_ENV });
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  const server = app.listen(PORT, HOST, () => {
+    log('info', `API server running on ${HOST}:${PORT}`, { port: PORT, host: HOST, env: NODE_ENV });
+  });
 
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
+}
 
 const gracefulShutdown = async (signal) => {
   log('info', `${signal} received, starting graceful shutdown`);
