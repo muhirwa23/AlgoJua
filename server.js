@@ -424,17 +424,10 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid request' });
     }
     
-    const adminPassword = (process.env.ADMIN_PASSWORD || '').trim();
-    if (!adminPassword) {
-      log('error', 'ADMIN_PASSWORD environment variable is missing or empty');
-      return res.status(500).json({ error: 'Authentication configuration error' });
-    }
-
-    // Use hashing for timing-safe comparison to handle different lengths safely
-    const inputHash = crypto.createHash('sha256').update(password).digest();
-    const adminHash = crypto.createHash('sha256').update(adminPassword).digest();
-    
-    const isValid = crypto.timingSafeEqual(inputHash, adminHash);
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(password.padEnd(100)),
+      Buffer.from((process.env.ADMIN_PASSWORD || '').padEnd(100))
+    );
     
     if (!isValid) {
       loginAttempts.set(ip, { count: attempts.count + 1, lastAttempt: Date.now() });
