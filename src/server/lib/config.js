@@ -18,9 +18,10 @@ export const config = {
     bucketName: process.env.R2_BUCKET_NAME,
     publicUrl: process.env.R2_PUBLIC_URL,
   },
-  resendApiKey: process.env.RESEND_API_KEY,
-  adminPassword: process.env.ADMIN_PASSWORD,
-  allowedOrigins: process.env.ALLOWED_ORIGINS
+    resendApiKey: process.env.RESEND_API_KEY,
+    adminPassword: process.env.ADMIN_PASSWORD,
+    jwtSecret: process.env.JWT_SECRET || process.env.ADMIN_PASSWORD || 'your-fallback-secret-key-change-this',
+    allowedOrigins: process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
     : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000', 'https://algo-jua.netlify.app'],
   requestTimeout: parseInt(process.env.REQUEST_TIMEOUT || '30000'),

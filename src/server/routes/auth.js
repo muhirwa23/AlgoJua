@@ -1,8 +1,9 @@
 import express from 'express';
 import crypto from 'crypto';
 import { config } from '../lib/config.js';
-import { sessions, createSession } from '../middleware/auth.js';
+import { createToken } from '../middleware/auth.js';
 import rateLimit from 'express-rate-limit';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.post('/login', authLimiter, async (req, res) => {
     }
     
     loginAttempts.delete(ip);
-    const token = createSession(ip);
+    const token = createToken(ip);
     res.json({ token });
   } catch (error) {
     console.error('Login error:', error);
@@ -56,24 +57,20 @@ router.post('/login', authLimiter, async (req, res) => {
 router.post('/verify', (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   
-  if (!token || !sessions.has(token)) {
+  if (!token) {
     return res.status(401).json({ valid: false });
   }
   
-  const session = sessions.get(token);
-  if (Date.now() > session.expiresAt) {
-    sessions.delete(token);
-    return res.status(401).json({ valid: false });
+  try {
+    jwt.verify(token, config.jwtSecret);
+    res.json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false });
   }
-  
-  res.json({ valid: true });
 });
 
 router.post('/logout', (req, res) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  if (token) {
-    sessions.delete(token);
-  }
+  // Stateless logout: Client just deletes the token
   res.json({ success: true });
 });
 
