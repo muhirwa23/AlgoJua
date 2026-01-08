@@ -118,6 +118,12 @@ const sanitizeObject = (obj) => {
   if (!obj || typeof obj !== 'object') return obj;
   const sanitized = {};
   for (const [key, value] of Object.entries(obj)) {
+    // Skip sanitization for sensitive fields like password
+    if (key.toLowerCase().includes('password')) {
+      sanitized[key] = value;
+      continue;
+    }
+    
     if (typeof value === 'string') {
       sanitized[key] = sanitizeString(value);
     } else if (Array.isArray(value)) {
@@ -424,10 +430,9 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid request' });
     }
     
-    const isValid = crypto.timingSafeEqual(
-      Buffer.from(password.padEnd(100)),
-      Buffer.from((process.env.ADMIN_PASSWORD || '').trim().padEnd(100))
-    );
+    const passwordHash = crypto.createHash('sha256').update(password).digest();
+    const envHash = crypto.createHash('sha256').update((process.env.ADMIN_PASSWORD || '').trim()).digest();
+    const isValid = crypto.timingSafeEqual(passwordHash, envHash);
     
     if (!isValid) {
       loginAttempts.set(ip, { count: attempts.count + 1, lastAttempt: Date.now() });
