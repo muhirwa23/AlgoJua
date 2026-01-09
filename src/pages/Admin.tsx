@@ -29,6 +29,8 @@ import "@/styles/rich-text-editor.css";
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
+    const [activeTab, setActiveTab] = useState("dashboard");
+    const [categoryActionTrigger, setCategoryActionTrigger] = useState(0);
     const [posts, setPosts] = useState<Post[]>([]);
     const [jobs, setJobs] = useState<Job[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -40,7 +42,6 @@ import "@/styles/rich-text-editor.css";
     const [isJobsLoading, setIsJobsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<Set<string>>(new Set());
-    const [activeTab, setActiveTab] = useState("dashboard");
     
     const [formData, setFormData] = useState({
 
@@ -113,12 +114,6 @@ import "@/styles/rich-text-editor.css";
       checkAuth();
     }, []);
 
-
-    useEffect(() => {
-      if (categories.length > 0 && !categories.some(c => c.name === formData.category)) {
-        setFormData(prev => ({ ...prev, category: categories[0].name }));
-      }
-    }, [categories, formData.category]);
 
     const loadPosts = async () => {
       try {
@@ -492,34 +487,59 @@ import "@/styles/rich-text-editor.css";
     };
 
     const handleCategorySave = async (category: { name: string; slug: string; description: string; color: string; icon: string }) => {
+
+    try {
       await categoriesApi.create(category);
       await loadCategories();
-    };
+    } catch (error) {
+      throw error;
+    }
+  };
 
-    const handleCategoryUpdate = async (id: string, category: Partial<{ name: string; slug: string; description: string; color: string; icon: string }>) => {
+  const handleCategoryUpdate = async (id: string, category: Partial<{ name: string; slug: string; description: string; color: string; icon: string }>) => {
+    try {
       await categoriesApi.update(id, category);
       await loadCategories();
-    };
+    } catch (error) {
+      throw error;
+    }
+  };
 
-    const handleCategoryDelete = async (id: string) => {
+  const handleCategoryDelete = async (id: string) => {
+    try {
       await categoriesApi.delete(id);
       await loadCategories();
-    };
+    } catch (error) {
+      throw error;
+    }
+  };
 
-    const handleMediaUpload = async (file: File, metadata?: { alt_text?: string; caption?: string }) => {
+  const handleMediaUpload = async (file: File, metadata?: { alt_text?: string; caption?: string }) => {
+    try {
       await mediaApi.upload(file, metadata);
       await loadMedia();
-    };
+    } catch (error) {
+      throw error;
+    }
+  };
 
-    const handleMediaUpdate = async (id: string, updates: { alt_text?: string; caption?: string }) => {
+  const handleMediaUpdate = async (id: string, updates: { alt_text?: string; caption?: string }) => {
+    try {
       await mediaApi.update(id, updates);
       await loadMedia();
-    };
+    } catch (error) {
+      throw error;
+    }
+  };
 
-    const handleMediaDelete = async (id: string) => {
+  const handleMediaDelete = async (id: string) => {
+    try {
       await mediaApi.delete(id);
       await loadMedia();
-    };
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const handleMediaSearch = async (query: string) => {
     try {
@@ -709,26 +729,29 @@ import "@/styles/rich-text-editor.css";
                 </CardContent>
               </Card>
 
-              <Card className="border-slate-800 bg-slate-900/50">
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>Frequently used tools</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("create")}>
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    Create New Post
-                  </Button>
-                  <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("media")}>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Media
-                  </Button>
-                  <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("categories")}>
-                    <Tag className="w-4 h-4 mr-2" />
-                    Manage Categories
-                  </Button>
-                </CardContent>
-              </Card>
+                <Card className="border-slate-800 bg-slate-900/50">
+                  <CardHeader>
+                    <CardTitle>Quick Actions</CardTitle>
+                    <CardDescription>Frequently used tools</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("create")}>
+                      <PlusCircle className="w-4 h-4 mr-2" />
+                      Create New Post
+                    </Button>
+                    <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("media")}>
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Media
+                    </Button>
+                    <Button className="w-full justify-start" variant="outline" onClick={() => {
+                      setActiveTab("categories");
+                      setCategoryActionTrigger(prev => prev + 1);
+                    }}>
+                      <Tag className="w-4 h-4 mr-2" />
+                      Manage Categories
+                    </Button>
+                  </CardContent>
+                </Card>
             </div>
           </TabsContent>
 
@@ -750,21 +773,42 @@ import "@/styles/rich-text-editor.css";
                       className="bg-slate-900 border-slate-700"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                      <SelectTrigger className="bg-slate-900 border-slate-700">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.name}>
-                            {cat.icon} {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Category *</Label>
+                      <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                        <SelectTrigger className="bg-slate-900 border-slate-700">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.length === 0 ? (
+                            <div className="p-2 text-sm text-slate-400 text-center">
+                              No categories found. 
+                              <Button 
+                                variant="link" 
+                                size="sm" 
+                                className="h-auto p-0 ml-1"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setActiveTab("categories");
+                                  setCategoryActionTrigger(prev => prev + 1);
+                                }}
+                              >
+                                Add one
+                              </Button>
+                            </div>
+                          ) : (
+                            categories.map((cat) => (
+                              <SelectItem key={cat.id} value={cat.name}>
+                                <span className="flex items-center gap-2">
+                                  <span>{cat.icon}</span>
+                                  <span>{cat.name}</span>
+                                </span>
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
                 </div>
 
                 <div className="space-y-2">
@@ -1301,14 +1345,15 @@ import "@/styles/rich-text-editor.css";
                 <CardTitle>Categories Management</CardTitle>
                 <CardDescription>Create and manage blog post categories</CardDescription>
               </CardHeader>
-              <CardContent>
-                <CategoriesManager
-                  categories={categories}
-                  onSave={handleCategorySave}
-                  onUpdate={handleCategoryUpdate}
-                  onDelete={handleCategoryDelete}
-                />
-              </CardContent>
+                <CardContent>
+                  <CategoriesManager
+                    categories={categories}
+                    forceShowAdd={categoryActionTrigger}
+                    onSave={handleCategorySave}
+                    onUpdate={handleCategoryUpdate}
+                    onDelete={handleCategoryDelete}
+                  />
+                </CardContent>
             </Card>
           </TabsContent>
 
