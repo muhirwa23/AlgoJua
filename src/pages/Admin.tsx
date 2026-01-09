@@ -9,6 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { PlusCircle, Save, Eye, Trash2, Lock, Edit2, ArrowLeft, Upload, Image as ImageIcon, FolderOpen, Tag, BarChart3, Briefcase } from "lucide-react";
 
@@ -30,7 +39,8 @@ import "@/styles/rich-text-editor.css";
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
     const [activeTab, setActiveTab] = useState("dashboard");
-    const [categoryActionTrigger, setCategoryActionTrigger] = useState(0);
+    const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+    const [quickCategoryName, setQuickCategoryName] = useState("");
     const [posts, setPosts] = useState<Post[]>([]);
     const [jobs, setJobs] = useState<Job[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -505,16 +515,42 @@ import "@/styles/rich-text-editor.css";
     }
   };
 
-  const handleCategoryDelete = async (id: string) => {
-    try {
-      await categoriesApi.delete(id);
-      await loadCategories();
-    } catch (error) {
-      throw error;
-    }
-  };
+    const handleCategoryDelete = async (id: string) => {
+      try {
+        await categoriesApi.delete(id);
+        await loadCategories();
+      } catch (error) {
+        throw error;
+      }
+    };
 
-  const handleMediaUpload = async (file: File, metadata?: { alt_text?: string; caption?: string }) => {
+    const handleQuickAddCategory = async () => {
+      if (!quickCategoryName.trim()) {
+        toast.error("Category name is required");
+        return;
+      }
+
+      try {
+        const slug = quickCategoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        await categoriesApi.create({
+          name: quickCategoryName,
+          slug,
+          description: `Posts about ${quickCategoryName}`,
+          color: "#3b82f6",
+          icon: "📁"
+        });
+        await loadCategories();
+        setFormData({ ...formData, category: quickCategoryName });
+        setQuickCategoryName("");
+        setIsAddCategoryOpen(false);
+        toast.success(`Category "${quickCategoryName}" added and selected`);
+      } catch (error) {
+        toast.error("Failed to add category");
+        console.error(error);
+      }
+    };
+
+    const handleMediaUpload = async (file: File, metadata?: { alt_text?: string; caption?: string }) => {
     try {
       await mediaApi.upload(file, metadata);
       await loadMedia();
@@ -729,11 +765,11 @@ import "@/styles/rich-text-editor.css";
                 </CardContent>
               </Card>
 
-                <Card className="border-slate-800 bg-slate-900/50">
-                  <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
-                    <CardDescription>Frequently used tools</CardDescription>
-                  </CardHeader>
+              <Card className="border-slate-800 bg-slate-900/50">
+                <CardHeader>
+                  <CardTitle>Quick Actions</CardTitle>
+                  <CardDescription>Frequently used tools</CardDescription>
+                </CardHeader>
                   <CardContent className="space-y-3">
                     <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("create")}>
                       <PlusCircle className="w-4 h-4 mr-2" />
@@ -743,15 +779,12 @@ import "@/styles/rich-text-editor.css";
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Media
                     </Button>
-                    <Button className="w-full justify-start" variant="outline" onClick={() => {
-                      setActiveTab("categories");
-                      setCategoryActionTrigger(prev => prev + 1);
-                    }}>
+                    <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("categories")}>
                       <Tag className="w-4 h-4 mr-2" />
                       Manage Categories
                     </Button>
                   </CardContent>
-                </Card>
+              </Card>
             </div>
           </TabsContent>
 
@@ -762,54 +795,80 @@ import "@/styles/rich-text-editor.css";
                 <CardDescription>Fill in the details below to {editingId ? "update" : "publish"} your post</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder="Enter post title"
-                      className="bg-slate-900 border-slate-700"
-                    />
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="category">Category *</Label>
+                      <Label htmlFor="title">Title *</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        placeholder="Enter post title"
+                        className="bg-slate-900 border-slate-700"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="category">Category</Label>
+                        <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10"
+                            >
+                              <PlusCircle className="w-3 h-3 mr-1" />
+                              Quick Add
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="bg-slate-900 border-slate-800 text-white">
+                            <DialogHeader>
+                              <DialogTitle>Add New Category</DialogTitle>
+                              <DialogDescription className="text-slate-400">
+                                Create a new category quickly. You can edit full details in the Categories tab.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="new-category-name">Category Name</Label>
+                                <Input
+                                  id="new-category-name"
+                                  value={quickCategoryName}
+                                  onChange={(e) => setQuickCategoryName(e.target.value)}
+                                  placeholder="e.g. AI Trends"
+                                  className="bg-slate-950 border-slate-700"
+                                  autoFocus
+                                  onKeyPress={(e) => e.key === "Enter" && handleQuickAddCategory()}
+                                />
+                              </div>
+                            </div>
+                            <DialogFooter>
+                              <Button variant="outline" onClick={() => setIsAddCategoryOpen(false)} className="border-slate-700">
+                                Cancel
+                              </Button>
+                              <Button onClick={handleQuickAddCategory}>
+                                Add Category
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
                       <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                         <SelectTrigger className="bg-slate-900 border-slate-700">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
-                        <SelectContent>
-                          {categories.length === 0 ? (
-                            <div className="p-2 text-sm text-slate-400 text-center">
-                              No categories found. 
-                              <Button 
-                                variant="link" 
-                                size="sm" 
-                                className="h-auto p-0 ml-1"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setActiveTab("categories");
-                                  setCategoryActionTrigger(prev => prev + 1);
-                                }}
-                              >
-                                Add one
-                              </Button>
-                            </div>
-                          ) : (
-                            categories.map((cat) => (
-                              <SelectItem key={cat.id} value={cat.name}>
-                                <span className="flex items-center gap-2">
-                                  <span>{cat.icon}</span>
-                                  <span>{cat.name}</span>
-                                </span>
-                              </SelectItem>
-                            ))
-                          )}
+                        <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                          {categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.name} className="hover:bg-slate-800 focus:bg-slate-800">
+                              <span className="flex items-center gap-2">
+                                <span className="text-lg">{cat.icon}</span>
+                                <span>{cat.name}</span>
+                              </span>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
-                </div>
+                  </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="subtitle">Subtitle *</Label>
@@ -1345,15 +1404,14 @@ import "@/styles/rich-text-editor.css";
                 <CardTitle>Categories Management</CardTitle>
                 <CardDescription>Create and manage blog post categories</CardDescription>
               </CardHeader>
-                <CardContent>
-                  <CategoriesManager
-                    categories={categories}
-                    forceShowAdd={categoryActionTrigger}
-                    onSave={handleCategorySave}
-                    onUpdate={handleCategoryUpdate}
-                    onDelete={handleCategoryDelete}
-                  />
-                </CardContent>
+              <CardContent>
+                <CategoriesManager
+                  categories={categories}
+                  onSave={handleCategorySave}
+                  onUpdate={handleCategoryUpdate}
+                  onDelete={handleCategoryDelete}
+                />
+              </CardContent>
             </Card>
           </TabsContent>
 

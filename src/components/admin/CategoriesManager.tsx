@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,23 +11,14 @@ import type { Category } from "@/lib/categories";
 
 interface CategoriesManagerProps {
   categories: Category[];
-  forceShowAdd?: number;
   onSave: (category: { name: string; slug: string; description: string; color: string; icon: string }) => Promise<void>;
   onUpdate: (id: string, category: Partial<{ name: string; slug: string; description: string; color: string; icon: string }>) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
 
-export function CategoriesManager({ categories, forceShowAdd = 0, onSave, onUpdate, onDelete }: CategoriesManagerProps) {
+export function CategoriesManager({ categories, onSave, onUpdate, onDelete }: CategoriesManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-
-  useEffect(() => {
-    if (forceShowAdd > 0) {
-      setShowAddForm(true);
-      // Scroll to form if needed
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [forceShowAdd]);
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
