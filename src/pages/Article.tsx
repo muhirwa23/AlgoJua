@@ -220,23 +220,26 @@ const Article = () => {
 
           {/* Article Content */}
           <div className="prose prose-lg max-w-none mb-16 animate-slide-up stagger-2">
-            <p className="text-lg leading-relaxed text-muted-foreground mb-8">
-              {article.content.introduction}
-            </p>
+            <div 
+              className="text-lg leading-relaxed text-muted-foreground mb-8 rich-text-content"
+              dangerouslySetInnerHTML={{ __html: article.content.introduction }}
+            />
 
             {article.content.sections.map((section, index) => (
               <div key={index} className="mb-10">
                 <h2 className="text-3xl font-bold mb-4">{section.heading}</h2>
-                <p className="text-lg leading-relaxed text-muted-foreground">
-                  {section.content}
-                </p>
+                <div 
+                  className="text-lg leading-relaxed text-muted-foreground rich-text-content"
+                  dangerouslySetInnerHTML={{ __html: section.content }}
+                />
               </div>
             ))}
 
             <div className="mt-12 p-6 rounded-2xl bg-muted border-l-4 border-accent">
-              <p className="text-lg leading-relaxed italic text-foreground">
-                {article.content.conclusion}
-              </p>
+              <div 
+                className="text-lg leading-relaxed italic text-foreground rich-text-content"
+                dangerouslySetInnerHTML={{ __html: article.content.conclusion }}
+              />
             </div>
           </div>
 

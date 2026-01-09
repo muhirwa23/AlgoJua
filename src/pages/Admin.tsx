@@ -14,6 +14,7 @@ import { PlusCircle, Save, Eye, Trash2, Lock, Edit2, ArrowLeft, Upload, Image as
 
 import { useNavigate } from "react-router-dom";
 import { postsApi, jobsApi, authApi, uploadApi, type Post, type Job } from "@/lib/api";
+import { uploadImageToR2 } from "@/lib/r2";
 
 import { categoriesDb, type Category } from "@/lib/categories";
 import { categoriesApi } from "@/lib/api-categories";
@@ -182,7 +183,13 @@ import "@/styles/rich-text-editor.css";
       
       const result = await uploadImageToR2(file);
       
-      setFormData({ ...formData, image_url: result.url });
+      if (type === 'author') {
+        setFormData({ ...formData, authorAvatar: result.url });
+      } else if (type === 'og') {
+        setFormData({ ...formData, ogImage: result.url });
+      } else {
+        setFormData({ ...formData, image_url: result.url });
+      }
       toast.success("Image uploaded successfully!");
     } catch (error) {
       console.error("Upload error:", error);
@@ -873,16 +880,33 @@ import "@/styles/rich-text-editor.css";
                       className="bg-slate-900 border-slate-700"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="authorAvatar">Author Avatar URL</Label>
-                    <Input
-                      id="authorAvatar"
-                      value={formData.authorAvatar}
-                      onChange={(e) => setFormData({ ...formData, authorAvatar: e.target.value })}
-                      placeholder="https://..."
-                      className="bg-slate-900 border-slate-700"
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="authorAvatar">Author Avatar URL</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="authorAvatar"
+                          value={formData.authorAvatar}
+                          onChange={(e) => setFormData({ ...formData, authorAvatar: e.target.value })}
+                          placeholder="https://..."
+                          className="bg-slate-900 border-slate-700 flex-1"
+                        />
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => document.getElementById('author-avatar-upload')?.click()}
+                          disabled={isUploading}
+                        >
+                          <Upload className="w-4 h-4" />
+                        </Button>
+                        <input
+                          id="author-avatar-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageUpload(e, 'author')}
+                        />
+                      </div>
+                    </div>
                 </div>
 
                 <div className="space-y-2">
@@ -953,16 +977,18 @@ import "@/styles/rich-text-editor.css";
                   />
                 </div>
 
-                <SEOFields
-                  formData={{
-                    metaTitle: formData.metaTitle,
-                    metaDescription: formData.metaDescription,
-                    metaKeywords: formData.metaKeywords,
-                    ogImage: formData.ogImage,
-                    slug: formData.slug,
-                  }}
-                  onChange={(field, value) => setFormData({ ...formData, [field]: value })}
-                />
+                  <SEOFields
+                    formData={{
+                      metaTitle: formData.metaTitle,
+                      metaDescription: formData.metaDescription,
+                      metaKeywords: formData.metaKeywords,
+                      ogImage: formData.ogImage,
+                      slug: formData.slug,
+                    }}
+                    onChange={(field, value) => setFormData({ ...formData, [field]: value })}
+                    onUpload={handleImageUpload}
+                    isUploading={isUploading}
+                  />
 
                 <div className="flex gap-3 pt-4">
                   <Button onClick={handleSave} className="flex-1" size="lg" disabled={isLoading}>
