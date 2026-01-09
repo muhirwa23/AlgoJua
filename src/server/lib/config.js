@@ -21,9 +21,16 @@ export const config = {
     resendApiKey: process.env.RESEND_API_KEY,
     adminPassword: process.env.ADMIN_PASSWORD,
     jwtSecret: process.env.JWT_SECRET || process.env.ADMIN_PASSWORD || 'your-fallback-secret-key-change-this',
-    allowedOrigins: process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000', 'https://algo-jua.netlify.app'],
+    allowedOrigins: (() => {
+      const origins = process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+        : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000', 'https://algo-jua.netlify.app'];
+      
+      if (process.env.BASE_URL && !origins.includes(process.env.BASE_URL)) {
+        origins.push(process.env.BASE_URL);
+      }
+      return origins;
+    })(),
   requestTimeout: parseInt(process.env.REQUEST_TIMEOUT || '30000'),
 };
 

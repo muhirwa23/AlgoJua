@@ -29,16 +29,22 @@ export const securityMiddleware = (app) => {
   app.use(hpp());
   app.disable('x-powered-by');
 
-  app.use(cors({
-    origin: (origin, callback) => {
-      if (!origin || config.allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true
-  }));
+    app.use(cors({
+      origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) {
+          return callback(null, true);
+        }
+
+        if (config.allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          console.warn(`CORS blocked: Origin "${origin}" is not in allowed list:`, config.allowedOrigins);
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: true
+    }));
 
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
