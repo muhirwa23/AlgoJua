@@ -40,6 +40,7 @@ import "@/styles/rich-text-editor.css";
     const [isJobsLoading, setIsJobsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<Set<string>>(new Set());
+    const [activeTab, setActiveTab] = useState("dashboard");
     
     const [formData, setFormData] = useState({
 
@@ -112,6 +113,12 @@ import "@/styles/rich-text-editor.css";
       checkAuth();
     }, []);
 
+
+    useEffect(() => {
+      if (categories.length > 0 && !categories.some(c => c.name === formData.category)) {
+        setFormData(prev => ({ ...prev, category: categories[0].name }));
+      }
+    }, [categories, formData.category]);
 
     const loadPosts = async () => {
       try {
@@ -485,59 +492,34 @@ import "@/styles/rich-text-editor.css";
     };
 
     const handleCategorySave = async (category: { name: string; slug: string; description: string; color: string; icon: string }) => {
-
-    try {
       await categoriesApi.create(category);
       await loadCategories();
-    } catch (error) {
-      throw error;
-    }
-  };
+    };
 
-  const handleCategoryUpdate = async (id: string, category: Partial<{ name: string; slug: string; description: string; color: string; icon: string }>) => {
-    try {
+    const handleCategoryUpdate = async (id: string, category: Partial<{ name: string; slug: string; description: string; color: string; icon: string }>) => {
       await categoriesApi.update(id, category);
       await loadCategories();
-    } catch (error) {
-      throw error;
-    }
-  };
+    };
 
-  const handleCategoryDelete = async (id: string) => {
-    try {
+    const handleCategoryDelete = async (id: string) => {
       await categoriesApi.delete(id);
       await loadCategories();
-    } catch (error) {
-      throw error;
-    }
-  };
+    };
 
-  const handleMediaUpload = async (file: File, metadata?: { alt_text?: string; caption?: string }) => {
-    try {
+    const handleMediaUpload = async (file: File, metadata?: { alt_text?: string; caption?: string }) => {
       await mediaApi.upload(file, metadata);
       await loadMedia();
-    } catch (error) {
-      throw error;
-    }
-  };
+    };
 
-  const handleMediaUpdate = async (id: string, updates: { alt_text?: string; caption?: string }) => {
-    try {
+    const handleMediaUpdate = async (id: string, updates: { alt_text?: string; caption?: string }) => {
       await mediaApi.update(id, updates);
       await loadMedia();
-    } catch (error) {
-      throw error;
-    }
-  };
+    };
 
-  const handleMediaDelete = async (id: string) => {
-    try {
+    const handleMediaDelete = async (id: string) => {
       await mediaApi.delete(id);
       await loadMedia();
-    } catch (error) {
-      throw error;
-    }
-  };
+    };
 
   const handleMediaSearch = async (query: string) => {
     try {
@@ -609,7 +591,7 @@ import "@/styles/rich-text-editor.css";
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs defaultValue="create" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="bg-slate-900 border border-slate-800">
               <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary">
                 <BarChart3 className="w-4 h-4 mr-2" />
@@ -733,24 +715,15 @@ import "@/styles/rich-text-editor.css";
                   <CardDescription>Frequently used tools</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" variant="outline" onClick={() => {
-                    const tabs = document.querySelector('[value="create"]');
-                    if (tabs instanceof HTMLElement) tabs.click();
-                  }}>
+                  <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("create")}>
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Create New Post
                   </Button>
-                  <Button className="w-full justify-start" variant="outline" onClick={() => {
-                    const tabs = document.querySelector('[value="media"]');
-                    if (tabs instanceof HTMLElement) tabs.click();
-                  }}>
+                  <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("media")}>
                     <Upload className="w-4 h-4 mr-2" />
                     Upload Media
                   </Button>
-                  <Button className="w-full justify-start" variant="outline" onClick={() => {
-                    const tabs = document.querySelector('[value="categories"]');
-                    if (tabs instanceof HTMLElement) tabs.click();
-                  }}>
+                  <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab("categories")}>
                     <Tag className="w-4 h-4 mr-2" />
                     Manage Categories
                   </Button>
