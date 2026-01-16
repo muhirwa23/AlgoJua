@@ -25,22 +25,22 @@ router.post('/login', authLimiter, async (req, res) => {
     return res.status(429).json({ error: 'Too many failed attempts. Please try again later.' });
   }
   
-  const { password } = req.body;
-  
-  if (!password || typeof password !== 'string' || password.length > 100) {
-    return res.status(400).json({ error: 'Invalid request' });
-  }
-  
-  const trimmedInput = password.trim();
-  const trimmedEnv = (config.adminPassword || '').trim();
-
-  const passwordHash = crypto.createHash('sha256').update(trimmedInput).digest();
-  const envHash = crypto.createHash('sha256').update(trimmedEnv).digest();
-  
-  try {
-    const isValid = crypto.timingSafeEqual(passwordHash, envHash);
+    const { password } = req.body;
     
-    if (!isValid) {
+    if (!password || typeof password !== 'string' || password.length > 100) {
+      return res.status(400).json({ error: 'Invalid request' });
+    }
+    
+    const trimmedInput = password.trim();
+    const trimmedEnv = (config.adminPassword || '').trim();
+  
+    const passwordHash = crypto.createHash('sha256').update(trimmedInput).digest();
+    const envHash = crypto.createHash('sha256').update(trimmedEnv).digest();
+    
+    try {
+      const isValid = crypto.timingSafeEqual(passwordHash, envHash);
+      
+      if (!isValid) {
       loginAttempts.set(ip, { count: attempts.count + 1, lastAttempt: Date.now() });
       return res.status(401).json({ error: 'Invalid credentials' });
     }
