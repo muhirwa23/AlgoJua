@@ -25,7 +25,7 @@ router.post('/login', authLimiter, async (req, res) => {
     return res.status(429).json({ error: 'Too many failed attempts. Please try again later.' });
   }
   
-  const { password } = req.body;
+  const { password } = req.body || {};
   
   if (!password || typeof password !== 'string' || password.length > 100) {
     return res.status(400).json({ error: 'Invalid request' });
