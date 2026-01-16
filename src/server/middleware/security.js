@@ -36,15 +36,23 @@ export const securityMiddleware = (app) => {
           return callback(null, true);
         }
 
-        if (config.allowedOrigins.includes(origin)) {
+        // Check if origin is in allowed list
+        const isAllowed = config.allowedOrigins.includes(origin) || 
+                         origin.endsWith('.vercel.app') || 
+                         origin.includes('algojua.top');
+
+        if (isAllowed) {
           callback(null, true);
         } else {
           console.warn(`CORS blocked: Origin "${origin}" is not in allowed list:`, config.allowedOrigins);
           callback(new Error('Not allowed by CORS'));
         }
       },
-      credentials: true
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
     }));
+
 
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,

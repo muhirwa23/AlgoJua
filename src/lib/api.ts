@@ -1,5 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL;
-if (!API_URL) {
+const API_URL = import.meta.env.VITE_API_URL || '';
+if (!API_URL && !import.meta.env.PROD) {
   console.warn('VITE_API_URL not set, using relative URLs');
 }
 
