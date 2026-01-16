@@ -97,14 +97,12 @@ const Index = () => {
                 <li><a href="/growth" className="hover:text-primary transition-colors">Career</a></li>
               </ul>
             </div>
-            <div>
-              <h3 className="font-semibold mb-4 text-primary">Company</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="/about" className="hover:text-primary transition-colors">About</a></li>
-
-                <li><a href="/contact" className="hover:text-primary transition-colors">Contact</a></li>
-              </ul>
-            </div>
+              <div>
+                <h3 className="font-semibold mb-4 text-primary">Company</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li><a href="/authors" className="hover:text-primary transition-colors">Authors</a></li>
+                </ul>
+              </div>
 
             <div>
               <h3 className="font-semibold mb-4 text-primary">Legal</h3>

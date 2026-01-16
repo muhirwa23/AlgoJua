@@ -13,10 +13,8 @@ import JobDetails from "./pages/JobDetails";
 
 import Creativity from "./pages/Creativity";
 import Growth from "./pages/Growth";
-import About from "./pages/About";
 
 import Authors from "./pages/Authors";
-import Contact from "./pages/Contact";
 import StyleGuide from "./pages/StyleGuide";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -39,13 +37,11 @@ const App = () => (
           <Route path="/article/:id" element={<Article />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
-          <Route path="/wellness" element={<Wellness />} />
-          <Route path="/creativity" element={<Creativity />} />
-          <Route path="/growth" element={<Growth />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/authors" element={<Authors />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/style-guide" element={<StyleGuide />} />
+            <Route path="/wellness" element={<Wellness />} />
+            <Route path="/creativity" element={<Creativity />} />
+            <Route path="/growth" element={<Growth />} />
+            <Route path="/authors" element={<Authors />} />
+            <Route path="/style-guide" element={<StyleGuide />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/admin" element={<Admin />} />

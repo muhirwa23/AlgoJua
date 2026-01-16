@@ -27,15 +27,20 @@ const HeroSection = () => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-4 animate-slide-up stagger-2">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-medium neon-button group w-full sm:w-auto">
-              Explore Articles
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button variant="outline" className="rounded-full px-8 py-6 text-base font-medium border-border hover:bg-secondary w-full sm:w-auto">
-              Browse Jobs
-            </Button>
-          </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-4 animate-slide-up stagger-2">
+              <Button 
+                onClick={() => window.location.href = '#articles'}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-medium neon-button group w-full sm:w-auto">
+                Explore Articles
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button 
+                onClick={() => window.location.href = '/jobs'}
+                variant="outline" 
+                className="rounded-full px-8 py-6 text-base font-medium border-border hover:bg-secondary w-full sm:w-auto">
+                Browse Jobs
+              </Button>
+            </div>
 
           {/* Stats */}
           <div className="flex items-center gap-8 pt-6 animate-slide-up stagger-3">
