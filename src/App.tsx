@@ -21,6 +21,8 @@ import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import AggregatorDashboard from "./pages/AggregatorDashboard";
+import ConfirmSubscription from "./pages/ConfirmSubscription";
+import Unsubscribe from "./pages/Unsubscribe";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +37,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/article/:id" element={<Article />} />
+          <Route path="/blog/:slug" element={<Article />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/wellness" element={<Wellness />} />
@@ -46,6 +49,8 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/aggregator-dashboard" element={<AggregatorDashboard />} />
+          <Route path="/confirm/:token" element={<ConfirmSubscription />} />
+          <Route path="/unsubscribe/:token" element={<Unsubscribe />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

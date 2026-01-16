@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Menu, X, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchDialog from "@/components/SearchDialog";
+import { SubscribeDialog } from "@/components/SubscribeDialog";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -124,11 +126,15 @@ const Header = () => {
               )}
             </button>
             
-            {isDesktop && (
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground neon-button" style={{ borderRadius: '9999px', padding: '0.5rem 1.5rem', fontWeight: 500 }}>
-                Subscribe
-              </Button>
-            )}
+{isDesktop && (
+                <Button 
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground neon-button" 
+                  style={{ borderRadius: '9999px', padding: '0.5rem 1.5rem', fontWeight: 500 }}
+                  onClick={() => setIsSubscribeOpen(true)}
+                >
+                  Subscribe
+                </Button>
+              )}
 
             {/* Mobile Menu Button */}
             {!isDesktop && (
@@ -176,14 +182,22 @@ const Header = () => {
                 Growth
               </a>
 
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground neon-button" style={{ borderRadius: '9999px', width: '100%', marginTop: '0.5rem' }}>
-                Subscribe
-              </Button>
-            </nav>
-          </div>
-        )}
-      </div>
-    </header>
+<Button 
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground neon-button" 
+                  style={{ borderRadius: '9999px', width: '100%', marginTop: '0.5rem' }}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setIsSubscribeOpen(true);
+                  }}
+                >
+                  Subscribe
+                </Button>
+              </nav>
+            </div>
+          )}
+        </div>
+        <SubscribeDialog open={isSubscribeOpen} onOpenChange={setIsSubscribeOpen} />
+      </header>
   );
 };
 

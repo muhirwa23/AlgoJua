@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { Mail, Loader2, CheckCircle2 } from 'lucide-react';
+import { newsletterApi } from '@/lib/api';
 
 interface SubscribeDialogProps {
   open: boolean;
@@ -44,22 +45,10 @@ export function SubscribeDialog({ open, onOpenChange }: SubscribeDialogProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to subscribe');
-      }
-
+      const result = await newsletterApi.subscribe(email);
+      
       setIsSuccess(true);
-      toast.success('Check your email to confirm your subscription!');
+      toast.success(result.message || 'Check your email to confirm your subscription!');
       
       setTimeout(() => {
         onOpenChange(false);

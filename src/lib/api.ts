@@ -411,4 +411,42 @@ export const healthApi = {
   },
 };
 
+export interface Subscriber {
+  id: number;
+  email: string;
+  status: 'pending' | 'confirmed' | 'unsubscribed';
+  created_at: string;
+}
+
+export interface SubscriberStats {
+  confirmed: string;
+  pending: string;
+  unsubscribed: string;
+  total: string;
+}
+
+export const newsletterApi = {
+  async subscribe(email: string): Promise<{ success: boolean; message: string }> {
+    return await apiRequest('/api/newsletter/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  async getSubscribers(): Promise<Subscriber[]> {
+    return await apiRequest('/api/newsletter/subscribers');
+  },
+
+  async getStats(): Promise<SubscriberStats> {
+    return await apiRequest('/api/newsletter/stats');
+  },
+
+  async notifySubscribers(postId: string): Promise<{ success: boolean; sent: number; failed: number }> {
+    return await apiRequest('/api/newsletter/notify', {
+      method: 'POST',
+      body: JSON.stringify({ postId }),
+    });
+  },
+};
+
 export type { Post as PostType, CreatePostInput as CreatePostInputType, Job as JobType, CreateJobInput as CreateJobInputType };

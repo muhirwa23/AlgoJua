@@ -44,8 +44,8 @@ const sanitizeObject = (obj) => {
   if (!obj || typeof obj !== 'object') return obj;
   const sanitized = {};
   for (const [key, value] of Object.entries(obj)) {
-    if (key.toLowerCase().includes('password')) {
-      sanitized[key] = value;
+    if (key.toLowerCase().includes('password') || key.toLowerCase() === 'email') {
+      sanitized[key] = typeof value === 'string' ? validator.trim(value) : value;
       continue;
     }
     

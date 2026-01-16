@@ -2,9 +2,10 @@ import express from 'express';
 import { nanoid } from 'nanoid';
 import validator from 'validator';
 import rateLimit from 'express-rate-limit';
-import { query, connect } from '../lib/db.js';
+import { query } from '../lib/db.js';
 import { resend } from '../lib/resend.js';
 import { config } from '../lib/config.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -13,6 +14,115 @@ const subscribeLimiter = rateLimit({
   max: 5,
   message: { error: 'Too many subscription attempts, please try again later' }
 });
+
+const generateBlogEmailHtml = (post, unsubscribeUrl) => {
+  const postUrl = `${config.baseUrl}/blog/${post.slug}`;
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: 'Segoe UI', Arial, sans-serif;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 40px 20px;">
+        <tr>
+          <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+              ${post.image_url ? `
+              <tr>
+                <td>
+                  <img src="${post.image_url}" alt="${post.title}" style="width: 100%; height: 250px; object-fit: cover;">
+                </td>
+              </tr>
+              ` : ''}
+              <tr>
+                <td style="padding: 40px;">
+                  <p style="color: #2563eb; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0; font-weight: 600;">${post.category || 'New Article'}</p>
+                  <h1 style="color: #18181b; font-size: 28px; line-height: 1.3; margin: 0 0 16px 0;">${post.title}</h1>
+                  <p style="color: #71717a; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">${post.subtitle || post.content_introduction?.substring(0, 150) + '...' || ''}</p>
+                  <table cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="background-color: #2563eb; border-radius: 8px;">
+                        <a href="${postUrl}" style="display: inline-block; padding: 14px 32px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px;">Read Article →</a>
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="color: #a1a1aa; font-size: 13px; margin: 24px 0 0 0;">
+                    ${post.read_time || '5 min read'} • By ${post.author_name || 'Algo Jua Team'}
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #fafafa; padding: 24px 40px; border-top: 1px solid #e4e4e7;">
+                  <p style="color: #71717a; font-size: 13px; margin: 0; text-align: center;">
+                    You're receiving this because you subscribed to Algo Jua.<br>
+                    <a href="${unsubscribeUrl}" style="color: #2563eb; text-decoration: none;">Unsubscribe</a> from future emails
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+};
+
+export const notifySubscribersNewPost = async (post) => {
+  try {
+    const result = await query(
+      `SELECT email, unsubscribe_token FROM subscribers WHERE status = 'confirmed'`
+    );
+    
+    const subscribers = result.rows;
+    if (subscribers.length === 0) {
+      console.log('[Newsletter] No confirmed subscribers to notify');
+      return { sent: 0, failed: 0 };
+    }
+
+    console.log(`[Newsletter] Sending notifications to ${subscribers.length} subscribers`);
+    
+    let sent = 0;
+    let failed = 0;
+    
+    const batchSize = 50;
+    for (let i = 0; i < subscribers.length; i += batchSize) {
+      const batch = subscribers.slice(i, i + batchSize);
+      
+      const emailPromises = batch.map(async (subscriber) => {
+        try {
+          const unsubscribeUrl = `${config.baseUrl}/unsubscribe/${subscriber.unsubscribe_token}`;
+          await resend.emails.send({
+            from: 'Algo Jua <[email protected]>',
+            to: subscriber.email,
+            subject: `New Post: ${post.title}`,
+            html: generateBlogEmailHtml(post, unsubscribeUrl),
+          });
+          return { success: true };
+        } catch (err) {
+          console.error(`[Newsletter] Failed to send to ${subscriber.email}:`, err.message);
+          return { success: false };
+        }
+      });
+      
+      const results = await Promise.all(emailPromises);
+      sent += results.filter(r => r.success).length;
+      failed += results.filter(r => !r.success).length;
+      
+      if (i + batchSize < subscribers.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+    
+    console.log(`[Newsletter] Notification complete: ${sent} sent, ${failed} failed`);
+    return { sent, failed };
+  } catch (error) {
+    console.error('[Newsletter] Error notifying subscribers:', error);
+    throw error;
+  }
+};
 
 router.post('/subscribe', subscribeLimiter, async (req, res) => {
   try {
@@ -149,6 +259,63 @@ router.get('/unsubscribe/:token', async (req, res) => {
   } catch (error) {
     console.error('Unsubscribe error:', error);
     res.status(500).json({ error: 'Failed to unsubscribe' });
+  }
+});
+
+router.post('/notify', requireAuth, async (req, res) => {
+  try {
+    const { postId } = req.body;
+    
+    if (!postId) {
+      return res.status(400).json({ error: 'Post ID is required' });
+    }
+
+    const postResult = await query('SELECT * FROM posts WHERE id = $1', [postId]);
+    
+    if (postResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const post = postResult.rows[0];
+    const result = await notifySubscribersNewPost(post);
+    
+    res.json({ 
+      success: true, 
+      message: `Notifications sent to ${result.sent} subscribers`,
+      ...result
+    });
+  } catch (error) {
+    console.error('Notify error:', error);
+    res.status(500).json({ error: 'Failed to send notifications' });
+  }
+});
+
+router.get('/subscribers', requireAuth, async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT id, email, status, created_at FROM subscribers ORDER BY created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get subscribers error:', error);
+    res.status(500).json({ error: 'Failed to fetch subscribers' });
+  }
+});
+
+router.get('/stats', requireAuth, async (req, res) => {
+  try {
+    const result = await query(`
+      SELECT 
+        COUNT(*) FILTER (WHERE status = 'confirmed') as confirmed,
+        COUNT(*) FILTER (WHERE status = 'pending') as pending,
+        COUNT(*) FILTER (WHERE status = 'unsubscribed') as unsubscribed,
+        COUNT(*) as total
+      FROM subscribers
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Get stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch stats' });
   }
 });
 
