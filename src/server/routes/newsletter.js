@@ -15,6 +15,8 @@ const subscribeLimiter = rateLimit({
   message: { error: 'Too many subscription attempts, please try again later' }
 });
 
+const EMAIL_FROM = process.env.EMAIL_FROM || 'Algo Jua <[email protected]>';
+
 const generateBlogEmailHtml = (post, unsubscribeUrl) => {
   const postUrl = `${config.baseUrl}/blog/${post.slug}`;
   return `
@@ -95,7 +97,7 @@ export const notifySubscribersNewPost = async (post) => {
         try {
           const unsubscribeUrl = `${config.baseUrl}/unsubscribe/${subscriber.unsubscribe_token}`;
           await resend.emails.send({
-            from: 'Algo Jua <[email protected]>',
+            from: EMAIL_FROM,
             to: subscriber.email,
             subject: `New Post: ${post.title}`,
             html: generateBlogEmailHtml(post, unsubscribeUrl),
@@ -154,8 +156,10 @@ router.post('/subscribe', subscribeLimiter, async (req, res) => {
     const subscriber = result.rows[0];
     const confirmUrl = `${config.baseUrl}/confirm/${confirmationToken}`;
 
-    await resend.emails.send({
-      from: 'Algo Jua <[email protected]>',
+    console.log('[Newsletter] Sending confirmation email to:', email);
+    
+    const emailResult = await resend.emails.send({
+      from: EMAIL_FROM,
       to: email,
       subject: 'Confirm your subscription to Algo Jua',
       html: `
@@ -171,6 +175,8 @@ router.post('/subscribe', subscribeLimiter, async (req, res) => {
         </div>
       `,
     });
+
+    console.log('[Newsletter] Email sent successfully:', emailResult);
 
     res.json({ 
       success: true, 
@@ -203,7 +209,7 @@ router.get('/confirm/:token', async (req, res) => {
     const unsubscribeUrl = `${config.baseUrl}/unsubscribe/${subscriber.unsubscribe_token}`;
 
     await resend.emails.send({
-      from: 'Algo Jua <[email protected]>',
+      from: EMAIL_FROM,
       to: subscriber.email,
       subject: 'Welcome to Algo Jua Newsletter!',
       html: `
