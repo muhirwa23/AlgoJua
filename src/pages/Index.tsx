@@ -101,7 +101,7 @@ const Index = () => {
               <h3 className="font-semibold mb-4 text-primary">Company</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="/about" className="hover:text-primary transition-colors">About</a></li>
-                <li><a href="/authors" className="hover:text-primary transition-colors">Writers</a></li>
+
                 <li><a href="/contact" className="hover:text-primary transition-colors">Contact</a></li>
               </ul>
             </div>
@@ -118,7 +118,7 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <span className="font-bold">Algo <span className="text-primary">Jua</span></span>
               </div>
-            <p className="text-sm text-muted-foreground">© 2024 Algo Jua. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">© 2026 Algo Jua. All rights reserved.</p>
           </div>
         </div>
       </footer>
