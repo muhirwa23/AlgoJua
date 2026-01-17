@@ -82,7 +82,9 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    env: config.nodeEnv
+    env: config.nodeEnv,
+    hasAdminPassword: !!process.env.ADMIN_PASSWORD,
+    adminPasswordLength: process.env.ADMIN_PASSWORD?.length || 0
   });
 });
 
