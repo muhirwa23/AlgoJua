@@ -116,17 +116,40 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
   return response.json();
 }
 
+export interface AdminUser {
+  id: number;
+  username: string;
+  role: string;
+}
+
 export const authApi = {
-  async login(password: string): Promise<{ token: string }> {
-    const result = await apiRequest('/api/auth/login', {
+  async checkSetupStatus(): Promise<{ setupRequired: boolean }> {
+    try {
+      return await apiRequest('/api/auth/setup/status');
+    } catch {
+      return { setupRequired: true };
+    }
+  },
+
+  async setup(username: string, password: string, confirmPassword: string): Promise<{ token: string; admin: AdminUser }> {
+    const result = await apiRequest('/api/auth/setup', {
       method: 'POST',
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username, password, confirmPassword }),
     });
     localStorage.setItem('admin_token', result.token);
     return result;
   },
 
-  async verify(): Promise<{ valid: boolean }> {
+  async login(username: string, password: string): Promise<{ token: string; admin: AdminUser }> {
+    const result = await apiRequest('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    });
+    localStorage.setItem('admin_token', result.token);
+    return result;
+  },
+
+  async verify(): Promise<{ valid: boolean; admin?: AdminUser }> {
     try {
       return await apiRequest('/api/auth/verify', { method: 'POST' });
     } catch {
@@ -137,6 +160,13 @@ export const authApi = {
   async logout(): Promise<void> {
     await apiRequest('/api/auth/logout', { method: 'POST' });
     localStorage.removeItem('admin_token');
+  },
+
+  async changePassword(currentPassword: string, newPassword: string, confirmPassword: string): Promise<{ message: string }> {
+    return await apiRequest('/api/auth/password', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+    });
   },
 };
 

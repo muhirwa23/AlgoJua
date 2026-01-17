@@ -19,10 +19,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { PlusCircle, Save, Eye, Trash2, Lock, Edit2, ArrowLeft, Upload, Image as ImageIcon, FolderOpen, Tag, BarChart3, Briefcase } from "lucide-react";
+import { PlusCircle, Save, Eye, Trash2, Lock, Edit2, ArrowLeft, Upload, Image as ImageIcon, FolderOpen, Tag, BarChart3, Briefcase, User, KeyRound } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
-import { postsApi, jobsApi, authApi, uploadApi, type Post, type Job } from "@/lib/api";
+import { postsApi, jobsApi, authApi, uploadApi, type Post, type Job, type AdminUser } from "@/lib/api";
 import { uploadImageToR2 } from "@/lib/r2";
 
 import { categoriesDb, type Category } from "@/lib/categories";
@@ -37,7 +37,14 @@ import "@/styles/rich-text-editor.css";
   export function Admin() {
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
+    const [isCheckingSetup, setIsCheckingSetup] = useState(true);
+    const [currentAdmin, setCurrentAdmin] = useState<AdminUser | null>(null);
+    
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    
     const [activeTab, setActiveTab] = useState("dashboard");
     const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
     const [quickCategoryName, setQuickCategoryName] = useState("");
@@ -100,28 +107,37 @@ import "@/styles/rich-text-editor.css";
 
 
     useEffect(() => {
-      const checkAuth = async () => {
-        const token = localStorage.getItem("admin_token");
-        if (token) {
-          try {
-            const result = await authApi.verify();
-            if (result.valid) {
-              setIsAuthenticated(true);
-              loadPosts();
-              loadJobs();
-              loadCategories();
-              loadMedia();
-            } else {
-              localStorage.removeItem("admin_token");
-              sessionStorage.removeItem("admin_authenticated");
+      const initAuth = async () => {
+        setIsCheckingSetup(true);
+        try {
+          const { setupRequired: needsSetup } = await authApi.checkSetupStatus();
+          setSetupRequired(needsSetup);
+          
+          if (!needsSetup) {
+            const token = localStorage.getItem("admin_token");
+            if (token) {
+              const result = await authApi.verify();
+              if (result.valid && result.admin) {
+                setIsAuthenticated(true);
+                setCurrentAdmin(result.admin);
+                loadPosts();
+                loadJobs();
+                loadCategories();
+                loadMedia();
+              } else {
+                localStorage.removeItem("admin_token");
+                sessionStorage.removeItem("admin_authenticated");
+              }
             }
-          } catch {
-            localStorage.removeItem("admin_token");
-            sessionStorage.removeItem("admin_authenticated");
           }
+        } catch (error) {
+          console.error('Auth init error:', error);
+          setSetupRequired(true);
+        } finally {
+          setIsCheckingSetup(false);
         }
       };
-      checkAuth();
+      initAuth();
     }, []);
 
 
@@ -211,18 +227,64 @@ import "@/styles/rich-text-editor.css";
     }
   };
 
-    const handleLogin = async () => {
+    const handleSetup = async () => {
+      if (!username.trim()) {
+        toast.error("Username is required");
+        return;
+      }
+      if (!password) {
+        toast.error("Password is required");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("Passwords do not match");
+        return;
+      }
+      
       try {
-        await authApi.login(password);
+        setIsLoading(true);
+        const result = await authApi.setup(username, password, confirmPassword);
         setIsAuthenticated(true);
+        setCurrentAdmin(result.admin);
+        setSetupRequired(false);
+        sessionStorage.setItem("admin_authenticated", "true");
+        loadPosts();
+        loadJobs();
+        loadCategories();
+        loadMedia();
+        toast.success("Admin account created successfully!");
+      } catch (error: any) {
+        toast.error(error.message || "Setup failed");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const handleLogin = async () => {
+      if (!username.trim()) {
+        toast.error("Username is required");
+        return;
+      }
+      if (!password) {
+        toast.error("Password is required");
+        return;
+      }
+      
+      try {
+        setIsLoading(true);
+        const result = await authApi.login(username, password);
+        setIsAuthenticated(true);
+        setCurrentAdmin(result.admin);
         sessionStorage.setItem("admin_authenticated", "true");
         loadPosts();
         loadJobs();
         loadCategories();
         loadMedia();
         toast.success("Welcome to the admin portal!");
-      } catch (error) {
-        toast.error("Invalid password");
+      } catch (error: any) {
+        toast.error(error.message || "Invalid credentials");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -234,9 +296,12 @@ import "@/styles/rich-text-editor.css";
       console.error('Logout error:', error);
     }
     setIsAuthenticated(false);
+    setCurrentAdmin(null);
     sessionStorage.removeItem("admin_authenticated");
     localStorage.removeItem("admin_token");
+    setUsername("");
     setPassword("");
+    setConfirmPassword("");
   };
 
   const addSection = () => {
@@ -586,7 +651,95 @@ import "@/styles/rich-text-editor.css";
     }
   };
 
+  if (isCheckingSetup) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-2xl border-slate-800">
+          <CardContent className="py-12 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-slate-400">Checking authentication status...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
+    if (setupRequired) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md shadow-2xl border-slate-800">
+            <CardHeader className="space-y-2 text-center">
+              <div className="flex justify-center mb-4">
+                <KeyRound className="w-12 h-12 text-primary" />
+              </div>
+              <CardTitle className="text-3xl">Admin Setup</CardTitle>
+              <CardDescription>Create your admin account to get started</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="setup-username">Username</Label>
+                <Input
+                  id="setup-username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter admin username"
+                  className="bg-slate-900 border-slate-700"
+                  autoComplete="username"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="setup-password">Password</Label>
+                <Input
+                  id="setup-password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password (min 8 chars)"
+                  className="bg-slate-900 border-slate-700"
+                  autoComplete="new-password"
+                />
+                <p className="text-xs text-slate-500">
+                  Must contain: 8+ characters, uppercase, lowercase, and number
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="setup-confirm">Confirm Password</Label>
+                <Input
+                  id="setup-confirm"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleSetup()}
+                  placeholder="Confirm your password"
+                  className="bg-slate-900 border-slate-700"
+                  autoComplete="new-password"
+                />
+              </div>
+              <Button onClick={handleSetup} className="w-full" size="lg" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <KeyRound className="w-4 h-4 mr-2" />
+                    Create Admin Account
+                  </>
+                )}
+              </Button>
+              <Button onClick={() => navigate("/")} variant="outline" className="w-full">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Site
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-2xl border-slate-800">
@@ -594,25 +747,47 @@ import "@/styles/rich-text-editor.css";
             <div className="flex justify-center mb-4">
               <Lock className="w-12 h-12 text-primary" />
             </div>
-            <CardTitle className="text-3xl">Admin Portal</CardTitle>
-            <CardDescription>Enter your password to access the content management system</CardDescription>
+            <CardTitle className="text-3xl">Admin Login</CardTitle>
+            <CardDescription>Enter your credentials to access the admin portal</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="login-username">Username</Label>
               <Input
-                id="password"
+                id="login-username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                className="bg-slate-900 border-slate-700"
+                autoComplete="username"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="login-password">Password</Label>
+              <Input
+                id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleLogin()}
-                placeholder="Enter admin password"
+                placeholder="Enter your password"
                 className="bg-slate-900 border-slate-700"
+                autoComplete="current-password"
               />
             </div>
-            <Button onClick={handleLogin} className="w-full" size="lg">
-              <Lock className="w-4 h-4 mr-2" />
-              Sign In
+            <Button onClick={handleLogin} className="w-full" size="lg" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Signing In...
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4 mr-2" />
+                  Sign In
+                </>
+              )}
             </Button>
             <Button onClick={() => navigate("/")} variant="outline" className="w-full">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -632,7 +807,9 @@ import "@/styles/rich-text-editor.css";
             <h1 className="text-2xl font-bold text-white flex items-center gap-2">
               <span className="text-primary">Algo</span><span>jua</span> Admin
             </h1>
-            <p className="text-sm text-slate-400 mt-1">Content Management System</p>
+            <p className="text-sm text-slate-400 mt-1">
+              {currentAdmin ? `Logged in as ${currentAdmin.username}` : 'Content Management System'}
+            </p>
           </div>
           <div className="flex gap-3">
             <Button onClick={() => navigate("/")} variant="outline" size="sm">

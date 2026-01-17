@@ -1,7 +1,13 @@
 import dotenv from 'dotenv';
+import crypto from 'crypto';
+
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
+
+const generateSecureSecret = () => {
+  return crypto.randomBytes(64).toString('hex');
+};
 
 export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -20,24 +26,23 @@ export const config = {
     bucketName: process.env.R2_BUCKET_NAME,
     publicUrl: process.env.R2_PUBLIC_URL,
   },
-    resendApiKey: process.env.RESEND_API_KEY,
-    adminPassword: process.env.ADMIN_PASSWORD,
-    jwtSecret: process.env.JWT_SECRET || process.env.ADMIN_PASSWORD || 'your-fallback-secret-key-change-this',
-    allowedOrigins: (() => {
-      const origins = process.env.ALLOWED_ORIGINS
-        ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
-        : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000', 'https://algo-jua.netlify.app'];
-      
-      if (process.env.BASE_URL && !origins.includes(process.env.BASE_URL)) {
-        origins.push(process.env.BASE_URL);
-      }
-      return origins;
-    })(),
+  resendApiKey: process.env.RESEND_API_KEY,
+  jwtSecret: process.env.JWT_SECRET || generateSecureSecret(),
+  allowedOrigins: (() => {
+    const origins = process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000', 'https://algo-jua.netlify.app'];
+    
+    if (process.env.BASE_URL && !origins.includes(process.env.BASE_URL)) {
+      origins.push(process.env.BASE_URL);
+    }
+    return origins;
+  })(),
   requestTimeout: parseInt(process.env.REQUEST_TIMEOUT || '30000'),
 };
 
 export const validateConfig = () => {
-  const required = ['DATABASE_URL', 'R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME', 'ADMIN_PASSWORD', 'RESEND_API_KEY'];
+  const required = ['DATABASE_URL', 'R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME', 'RESEND_API_KEY'];
   const missing = required.filter(key => !process.env[key]);
   
   if (missing.length > 0) {
@@ -49,5 +54,9 @@ export const validateConfig = () => {
   if (!config.baseUrl && config.isProduction) {
     console.error('FATAL: BASE_URL environment variable is required in production');
     process.exit(1);
+  }
+  
+  if (!process.env.JWT_SECRET && config.isProduction) {
+    console.warn('WARNING: JWT_SECRET not set. Using auto-generated secret. Sessions will not persist across restarts.');
   }
 };

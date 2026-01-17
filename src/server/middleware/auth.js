@@ -10,6 +10,11 @@ export const requireAuth = (req, res, next) => {
   
   try {
     const decoded = jwt.verify(token, config.jwtSecret);
+    
+    if (!decoded.id || !decoded.role) {
+      return res.status(401).json({ error: 'Invalid token structure' });
+    }
+    
     req.admin = decoded;
     next();
   } catch (error) {
@@ -21,10 +26,17 @@ export const requireAuth = (req, res, next) => {
   }
 };
 
-export const createToken = (ip) => {
-  return jwt.sign(
-    { ip, role: 'admin' }, 
-    config.jwtSecret, 
-    { expiresIn: '8h' }
-  );
+export const requireAdmin = (req, res, next) => {
+  if (!req.admin || req.admin.role !== 'ADMIN') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  next();
+};
+
+export const createToken = (adminData) => {
+  const payload = typeof adminData === 'object' 
+    ? { id: adminData.id, username: adminData.username, role: adminData.role }
+    : { ip: adminData, role: 'ADMIN' };
+    
+  return jwt.sign(payload, config.jwtSecret, { expiresIn: '8h' });
 };
