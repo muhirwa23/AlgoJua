@@ -1,5 +1,4 @@
 import express from 'express';
-import crypto from 'crypto';
 import { config } from '../lib/config.js';
 import { createToken } from '../middleware/auth.js';
 import rateLimit from 'express-rate-limit';
@@ -31,20 +30,21 @@ router.post('/login', authLimiter, async (req, res) => {
     return res.status(400).json({ error: 'Invalid request' });
   }
   
-  const trimmedInput = password.trim();
-  const trimmedEnv = (config.adminPassword || '').trim();
-
-  const passwordHash = crypto.createHash('sha256').update(trimmedInput).digest();
-  const envHash = crypto.createHash('sha256').update(trimmedEnv).digest();
+  const adminPassword = process.env.ADMIN_PASSWORD || '';
+  
+  if (!adminPassword) {
+    console.error('ADMIN_PASSWORD not set');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+  
+  const isValid = password === adminPassword;
+  
+  if (!isValid) {
+    loginAttempts.set(ip, { count: attempts.count + 1, lastAttempt: Date.now() });
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
   
   try {
-    const isValid = crypto.timingSafeEqual(passwordHash, envHash);
-    
-    if (!isValid) {
-      loginAttempts.set(ip, { count: attempts.count + 1, lastAttempt: Date.now() });
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    
     loginAttempts.delete(ip);
     const token = createToken(ip);
     res.json({ token });
