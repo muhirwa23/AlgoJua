@@ -86,32 +86,16 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-semibold mb-4 text-primary">Categories</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li><a href="/jobs" className="hover:text-primary transition-colors">Jobs</a></li>
-
-                  <li><a href="/creativity" className="hover:text-primary transition-colors">Creativity</a></li>
-
-                <li><a href="/growth" className="hover:text-primary transition-colors">Career</a></li>
-              </ul>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               <div>
-                <h3 className="font-semibold mb-4 text-primary">Company</h3>
+                <h3 className="font-semibold mb-4 text-primary">Categories</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li><a href="/authors" className="hover:text-primary transition-colors">Authors</a></li>
+                    <li><a href="/jobs" className="hover:text-primary transition-colors">Jobs</a></li>
+                    <li><a href="/creativity" className="hover:text-primary transition-colors">Creativity</a></li>
+                  <li><a href="/growth" className="hover:text-primary transition-colors">Career</a></li>
                 </ul>
               </div>
-
-            <div>
-              <h3 className="font-semibold mb-4 text-primary">Legal</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="/privacy" className="hover:text-primary transition-colors">Privacy</a></li>
-                <li><a href="/terms" className="hover:text-primary transition-colors">Terms</a></li>
-              </ul>
             </div>
-          </div>
           <div className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <span className="font-bold">Algo <span className="text-primary">Jua</span></span>
