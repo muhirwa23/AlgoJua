@@ -127,7 +127,7 @@ export const authApi = {
     try {
       return await apiRequest('/api/auth/setup/status');
     } catch {
-      return { setupRequired: true };
+      return { setupRequired: false };
     }
   },
 

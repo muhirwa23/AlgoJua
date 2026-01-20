@@ -130,10 +130,10 @@ import "@/styles/rich-text-editor.css";
               }
             }
           }
-        } catch (error) {
-          console.error('Auth init error:', error);
-          setSetupRequired(true);
-        } finally {
+          } catch (error) {
+            console.error('Auth init error:', error);
+            setSetupRequired(false);
+          } finally {
           setIsCheckingSetup(false);
         }
       };
