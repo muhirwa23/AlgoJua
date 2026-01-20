@@ -6,6 +6,7 @@ import { postsApi, type Post } from "@/lib/api";
 import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { FollowItForm } from "@/components/FollowItForm";
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
@@ -290,20 +291,13 @@ const Article = () => {
           </div>
 
           {/* Newsletter CTA */}
-          <div className="mb-16 rounded-2xl bg-card p-8 md:p-12 text-center">
+          <div className="mb-16 rounded-2xl bg-card p-8 md:p-12 text-center border border-border/50">
             <h3 className="text-2xl md:text-3xl font-bold mb-4">Enjoyed this article?</h3>
             <p className="text-muted-foreground mb-6">
               Subscribe to receive more insights like this directly in your inbox.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="flex-1 px-4 py-3 rounded-full border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8">
-                Subscribe
-              </Button>
+            <div className="max-w-md mx-auto">
+              <FollowItForm />
             </div>
           </div>
         </article>
