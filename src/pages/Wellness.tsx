@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
 import { postsApi, type Post } from "@/lib/api";
 
@@ -94,6 +95,7 @@ const Wellness = () => {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import type * as React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Mail } from 'lucide-react';
-import { FollowItForm } from './FollowItForm';
+import { FollowItForm } from '@/components/FollowItForm';
 
 interface SubscribeDialogProps {
   open: boolean;

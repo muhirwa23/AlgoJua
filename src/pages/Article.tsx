@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Header from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
 import { postsApi, type Post } from "@/lib/api";
 import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
@@ -316,6 +317,7 @@ const Article = () => {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };
