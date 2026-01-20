@@ -33,9 +33,11 @@ const HeroSection = () => {
                       const el = document.getElementById('articles');
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="relative bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-semibold group w-full sm:w-auto overflow-hidden shadow-[0_0_30px_hsl(82_85%_55%/0.4)] hover:shadow-[0_0_50px_hsl(82_85%_55%/0.6)] transition-all duration-300 hover:-translate-y-1 before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700">
-                    Explore Articles
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    className="relative bg-primary hover:bg-primary/90 text-black rounded-full px-8 py-6 text-base font-semibold group w-full sm:w-auto overflow-hidden shadow-[0_0_30px_hsl(82_85%_55%/0.4)] hover:shadow-[0_0_50px_hsl(82_85%_55%/0.6)] transition-all duration-300 hover:-translate-y-1">
+                    <span className="relative z-10 flex items-center">
+                      Explore Articles
+                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </span>
                   </Button>
                 <Button 
                   onClick={() => window.location.href = '/jobs'}
