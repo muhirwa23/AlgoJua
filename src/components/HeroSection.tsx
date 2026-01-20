@@ -27,28 +27,23 @@ const HeroSection = () => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-4 animate-slide-up stagger-2">
+          <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 animate-slide-up stagger-2">
             <Button 
               onClick={() => {
                 const el = document.getElementById('articles');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="relative bg-primary hover:bg-primary/90 text-black rounded-full px-10 py-7 text-lg font-bold group w-full sm:w-auto overflow-hidden shadow-[0_0_40px_hsl(var(--primary)/0.3)] hover:shadow-[0_0_60px_hsl(var(--primary)/0.5)] transition-all duration-500 hover:-translate-y-1.5 active:scale-95 border-none"
+              className="bg-[#c8e64a] hover:bg-[#b8d63a] text-black rounded-full px-8 py-6 text-base font-medium group transition-all duration-300 hover:scale-105"
             >
-              <span className="relative z-10 flex items-center gap-3">
-                Explore Articles
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-              </span>
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              Explore Articles
+              <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
 
             <Button 
               onClick={() => window.location.href = '/jobs'}
               variant="outline" 
-              className="relative rounded-full px-10 py-7 text-lg font-bold border-2 border-primary/20 bg-background/40 backdrop-blur-md hover:bg-primary/10 hover:border-primary/60 text-foreground w-full sm:w-auto transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_0_30px_hsl(var(--primary)/0.2)] group active:scale-95"
+              className="rounded-full px-8 py-6 text-base font-medium border-2 border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-white transition-all duration-300 hover:scale-105"
             >
-              <Briefcase className="mr-3 w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
               Browse Jobs
             </Button>
           </div>
