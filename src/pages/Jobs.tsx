@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { JobListing } from "@/components/JobListing";
 import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -164,12 +163,11 @@ export function Jobs() {
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">No jobs available at the moment. Check back soon!</p>
                 </div>
-                )}
-                </section>
-          </main>
-          <Footer />
-        </div>
-    );
-  }
+              )}
+              </section>
+        </main>
+      </div>
+  );
+}
 
 export default Jobs;
