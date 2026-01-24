@@ -261,10 +261,6 @@ import "@/styles/rich-text-editor.css";
     };
 
     const handleLogin = async () => {
-      if (!username.trim()) {
-        toast.error("Username is required");
-        return;
-      }
       if (!password) {
         toast.error("Password is required");
         return;
@@ -272,7 +268,7 @@ import "@/styles/rich-text-editor.css";
       
       try {
         setIsLoading(true);
-        const result = await authApi.login(username, password);
+        const result = await authApi.login('admin', password);
         setIsAuthenticated(true);
         setCurrentAdmin(result.admin);
         sessionStorage.setItem("admin_authenticated", "true");
@@ -741,63 +737,52 @@ import "@/styles/rich-text-editor.css";
     }
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-2xl border-slate-800">
-          <CardHeader className="space-y-2 text-center">
-            <div className="flex justify-center mb-4">
-              <Lock className="w-12 h-12 text-primary" />
-            </div>
-            <CardTitle className="text-3xl">Admin Login</CardTitle>
-            <CardDescription>Enter your credentials to access the admin portal</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="login-username">Username</Label>
-              <Input
-                id="login-username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
-                className="bg-slate-900 border-slate-700"
-                autoComplete="username"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="login-password">Password</Label>
-              <Input
-                id="login-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleLogin()}
-                placeholder="Enter your password"
-                className="bg-slate-900 border-slate-700"
-                autoComplete="current-password"
-              />
-            </div>
-            <Button onClick={handleLogin} className="w-full" size="lg" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Signing In...
-                </>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4 mr-2" />
-                  Sign In
-                </>
-              )}
-            </Button>
-            <Button onClick={() => navigate("/")} variant="outline" className="w-full">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Site
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md shadow-2xl border-slate-800">
+            <CardHeader className="space-y-2 text-center">
+              <div className="flex justify-center mb-4">
+                <Lock className="w-12 h-12 text-primary" />
+              </div>
+              <CardTitle className="text-3xl">Admin Login</CardTitle>
+              <CardDescription>Enter your password to access the admin portal</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="login-password">Admin Password</Label>
+                <Input
+                  id="login-password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleLogin()}
+                  placeholder="Enter admin password"
+                  className="bg-slate-900 border-slate-700"
+                  autoComplete="current-password"
+                  autoFocus
+                />
+              </div>
+              <Button onClick={handleLogin} className="w-full" size="lg" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4 mr-2" />
+                    Sign In
+                  </>
+                )}
+              </Button>
+              <Button onClick={() => navigate("/")} variant="outline" className="w-full">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Site
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
