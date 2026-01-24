@@ -12,10 +12,23 @@ const router = express.Router();
 const subscribeLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: { error: 'Too many subscription attempts, please try again later' }
 });
 
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Algo Jua <[email protected]>';
+
+const validateToken = (token) => {
+  if (!token || typeof token !== 'string') return false;
+  if (token.length < 20 || token.length > 64) return false;
+  return /^[a-zA-Z0-9_-]+$/.test(token);
+};
+
+const sanitizeString = (str, maxLength = 500) => {
+  if (!str || typeof str !== 'string') return '';
+  return validator.trim(str.slice(0, maxLength));
+};
 
 const generateBlogEmailHtml = (post, unsubscribeUrl) => {
   const postUrl = `${config.baseUrl}/blog/${post.slug}`;
@@ -193,6 +206,10 @@ router.get('/confirm/:token', async (req, res) => {
   try {
     const { token } = req.params;
 
+    if (!validateToken(token)) {
+      return res.status(400).json({ error: 'Invalid confirmation token format' });
+    }
+
     const result = await query(
       `UPDATE subscribers 
        SET status = 'confirmed', confirmation_token = NULL
@@ -244,6 +261,10 @@ router.get('/confirm/:token', async (req, res) => {
 router.get('/unsubscribe/:token', async (req, res) => {
   try {
     const { token } = req.params;
+
+    if (!validateToken(token)) {
+      return res.status(400).json({ error: 'Invalid unsubscribe token format' });
+    }
 
     const result = await query(
       `UPDATE subscribers 
