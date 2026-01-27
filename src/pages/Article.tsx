@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { FollowItForm } from "@/components/FollowItForm";
 
 const Article = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, slug } = useParams<{ id?: string; slug?: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,14 +18,17 @@ const Article = () => {
 
   useEffect(() => {
     const loadPost = async () => {
-      if (!id) {
+      const identifier = slug || id;
+      if (!identifier) {
         setNotFound(true);
         setIsLoading(false);
         return;
       }
 
       try {
-        const fetchedPost = await postsApi.fetchById(id);
+        const fetchedPost = slug 
+          ? await postsApi.fetchBySlug(slug)
+          : await postsApi.fetchById(identifier);
         if (!fetchedPost) {
           setNotFound(true);
         } else {
@@ -33,7 +36,7 @@ const Article = () => {
           
           const allPosts = await postsApi.fetchAll();
           const related = allPosts
-            .filter(p => p.id !== id && p.category === fetchedPost.category)
+            .filter(p => p.id !== fetchedPost.id && p.category === fetchedPost.category)
             .slice(0, 3);
           setRelatedPosts(related);
         }
@@ -46,7 +49,7 @@ const Article = () => {
     };
 
     loadPost();
-  }, [id]);
+  }, [id, slug]);
 
   if (isLoading) {
     return (
@@ -95,6 +98,7 @@ const Article = () => {
     date: new Date(p.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     readTime: p.read_time,
     image: p.image_url,
+    slug: p.slug,
     author: {
       name: p.author_name,
       avatar: p.author_avatar,
@@ -103,8 +107,14 @@ const Article = () => {
     tags: p.tags,
   }));
 
+  const getShareUrl = () => {
+    const baseUrl = window.location.origin;
+    const postSlug = post?.slug || id;
+    return `${baseUrl}/blog/${postSlug}`;
+  };
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText(getShareUrl());
     toast.success("Link copied to clipboard!");
   };
 
@@ -190,25 +200,25 @@ const Article = () => {
                   <Link2 className="w-4 h-4" />
                 </button>
                 <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
-                  aria-label="Share on Twitter"
-                >
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
-                  aria-label="Share on Facebook"
-                >
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                    aria-label="Share on Twitter"
+                  >
+                    <Twitter className="w-4 h-4" />
+                  </a>
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                    aria-label="Share on Facebook"
+                  >
+                    <Facebook className="w-4 h-4" />
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
@@ -271,16 +281,16 @@ const Article = () => {
                 <span className="text-sm">Copy link</span>
               </button>
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
-                aria-label="Share on Twitter"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a
-                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(getShareUrl())}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                  aria-label="Share on Twitter"
+                >
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"

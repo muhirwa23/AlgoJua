@@ -29,6 +29,7 @@ const Wellness = () => {
     date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     readTime: post.read_time,
     image: post.image_url,
+    slug: post.slug,
     author: {
       name: post.author_name,
       avatar: post.author_avatar,
