@@ -399,14 +399,14 @@ import "@/styles/rich-text-editor.css";
       subtitle: post.subtitle || "",
       category: post.category,
       readTime: post.read_time,
-      image_url: post.image_url,
+      image_url: post.image_url || "",
       authorName: post.author_name,
       authorAvatar: post.author_avatar,
       authorBio: post.author_bio,
       introduction: post.content_introduction || "",
-      sections: post.content_sections.length > 0 ? post.content_sections : [{ heading: "", content: "" }],
+      sections: post.content_sections && post.content_sections.length > 0 ? post.content_sections : [{ heading: "", content: "" }],
       conclusion: post.content_conclusion || "",
-      tags: post.tags.join(", "),
+      tags: post.tags?.join(", ") || "",
       metaTitle: post.meta_title || "",
       metaDescription: post.meta_description || "",
       metaKeywords: post.meta_keywords?.join(", ") || "",
@@ -414,7 +414,8 @@ import "@/styles/rich-text-editor.css";
       slug: post.slug || "",
     });
     setEditingId(post.id);
-    toast.info("Editing post");
+    setActiveTab("create");
+    toast.info(`Editing: ${post.title}`);
   };
 
     const handleDelete = async (id: string) => {
