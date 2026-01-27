@@ -4,7 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
+<<<<<<< HEAD
     "node": ">=18.x"
+=======
+    "node": "24.x"
+>>>>>>> origin/main
   },
     "scripts": {
       "dev": "vite",
