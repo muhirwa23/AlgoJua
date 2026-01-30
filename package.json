@@ -3,13 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "engines": {
-<<<<<<< HEAD
-    "node": ">=18.x"
-=======
-    "node": "24.x"
->>>>>>> origin/main
-  },
+    "engines": {
+      "node": ">=18.x"
+    },
     "scripts": {
       "dev": "vite",
       "server": "node server.js",
