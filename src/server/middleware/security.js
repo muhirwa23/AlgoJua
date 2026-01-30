@@ -5,6 +5,8 @@ import rateLimit from 'express-rate-limit';
 import { config } from '../lib/config.js';
 
 export const securityMiddleware = (app) => {
+  app.set('trust proxy', 1);
+  
   app.use(helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
     contentSecurityPolicy: {
@@ -29,38 +31,57 @@ export const securityMiddleware = (app) => {
   app.use(hpp());
   app.disable('x-powered-by');
 
-    app.use(cors({
-      origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) {
-          return callback(null, true);
-        }
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
 
-        // Check if origin is in allowed list
-        const isAllowed = config.allowedOrigins.includes(origin) || 
-                         origin.endsWith('.vercel.app') || 
-                         origin.includes('algojua.top');
+      const isAllowed = config.allowedOrigins.includes(origin) || 
+                       origin.endsWith('.vercel.app') || 
+                       origin.includes('algojua.top');
 
-        if (isAllowed) {
-          callback(null, true);
-        } else {
-          console.warn(`CORS blocked: Origin "${origin}" is not in allowed list:`, config.allowedOrigins);
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-    }));
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    maxAge: 86400
+  };
 
+  app.use(cors(corsOptions));
 
-  const limiter = rateLimit({
+  const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later' },
+    skip: (req) => req.path === '/api/health'
+  });
+
+  const strictLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: 'Too many requests, please try again later' }
   });
 
-  app.use('/api/', limiter);
+  const uploadLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 50,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Upload limit reached, please try again later' }
+  });
+
+  app.use('/api/', generalLimiter);
+  app.use('/api/auth/', strictLimiter);
+  app.use('/api/media', uploadLimiter);
+  app.use('/api/upload', uploadLimiter);
 };

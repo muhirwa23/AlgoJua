@@ -124,49 +124,47 @@ export interface AdminUser {
 
 export const authApi = {
   async checkSetupStatus(): Promise<{ setupRequired: boolean }> {
-    try {
-      return await apiRequest('/api/auth/setup/status');
-    } catch {
-      return { setupRequired: false };
-    }
+    return { setupRequired: false };
   },
 
   async setup(username: string, password: string, confirmPassword: string): Promise<{ token: string; admin: AdminUser }> {
-    const result = await apiRequest('/api/auth/setup', {
-      method: 'POST',
-      body: JSON.stringify({ username, password, confirmPassword }),
-    });
-    localStorage.setItem('admin_token', result.token);
-    return result;
+    return this.login(username, password);
   },
 
   async login(username: string, password: string): Promise<{ token: string; admin: AdminUser }> {
     const result = await apiRequest('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ password }),
     });
     localStorage.setItem('admin_token', result.token);
-    return result;
+    return {
+      token: result.token,
+      admin: { id: 1, username: username || 'admin', role: 'admin' }
+    };
   },
 
   async verify(): Promise<{ valid: boolean; admin?: AdminUser }> {
     try {
-      return await apiRequest('/api/auth/verify', { method: 'POST' });
+      const result = await apiRequest('/api/auth/verify', { method: 'POST' });
+      return { 
+        valid: result.valid, 
+        admin: result.valid ? { id: 1, username: 'admin', role: 'admin' } : undefined 
+      };
     } catch {
       return { valid: false };
     }
   },
 
   async logout(): Promise<void> {
-    await apiRequest('/api/auth/logout', { method: 'POST' });
+    try {
+      await apiRequest('/api/auth/logout', { method: 'POST' });
+    } catch {
+    }
     localStorage.removeItem('admin_token');
   },
 
   async changePassword(currentPassword: string, newPassword: string, confirmPassword: string): Promise<{ message: string }> {
-    return await apiRequest('/api/auth/password', {
-      method: 'PUT',
-      body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
-    });
+    return { message: 'Password change not supported in this configuration' };
   },
 };
 

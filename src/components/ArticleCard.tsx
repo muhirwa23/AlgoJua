@@ -6,10 +6,11 @@ interface ArticleCardProps {
   category: string;
   date: string;
   image: string;
+  slug?: string;
   size?: "small" | "large";
 }
 
-const ArticleCard = ({ id, title, category, date, image, size = "small" }: ArticleCardProps) => {
+const ArticleCard = ({ id, title, category, date, image, slug, size = "small" }: ArticleCardProps) => {
   const getCategoryClass = (cat: string) => {
     const normalized = cat.toLowerCase();
     if (normalized.includes("job")) return "tag-jobs";
@@ -21,9 +22,11 @@ const ArticleCard = ({ id, title, category, date, image, size = "small" }: Artic
     return "tag-tools";
   };
 
+  const articleUrl = slug ? `/blog/${slug}` : `/article/${id}`;
+
   return (
     <a
-      href={`/article/${id}`}
+      href={articleUrl}
       className={`group relative block rounded-[2.5rem] overflow-hidden card-hover ${
         size === "large" ? "col-span-1 md:col-span-2 row-span-2" : ""
       }`}

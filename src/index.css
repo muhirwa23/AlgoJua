@@ -157,11 +157,12 @@
   }
 
   .card-hover {
-    @apply transition-all duration-500 hover:scale-[1.02];
+    @apply transition-all duration-500;
     box-shadow: 0 4px 20px -4px hsl(var(--shadow-soft) / 0.3);
   }
 
   .card-hover:hover {
+    transform: scale(1.02);
     box-shadow: var(--glow-primary);
   }
 
@@ -276,12 +277,12 @@
   .stagger-6 { animation-delay: 0.6s; opacity: 0; animation-fill-mode: forwards; }
 
   /* Category tags */
-  .tag-jobs { @apply bg-[hsl(var(--tag-jobs))] text-background font-medium; }
-  .tag-tools { @apply bg-[hsl(var(--tag-tools))] text-background font-medium; }
-  .tag-trends { @apply bg-[hsl(var(--tag-trends))] text-background font-medium; }
-  .tag-news { @apply bg-[hsl(var(--tag-news))] text-background font-medium; }
-  .tag-opportunities { @apply bg-[hsl(var(--tag-opportunities))] text-background font-medium; }
-  .tag-career { @apply bg-[hsl(var(--tag-career))] text-background font-medium; }
+  .tag-jobs { @apply text-background font-medium; background-color: hsl(var(--tag-jobs)); }
+  .tag-tools { @apply text-background font-medium; background-color: hsl(var(--tag-tools)); }
+  .tag-trends { @apply text-background font-medium; background-color: hsl(var(--tag-trends)); }
+  .tag-news { @apply text-background font-medium; background-color: hsl(var(--tag-news)); }
+  .tag-opportunities { @apply text-background font-medium; background-color: hsl(var(--tag-opportunities)); }
+  .tag-career { @apply text-background font-medium; background-color: hsl(var(--tag-career)); }
 
   /* Text gradient */
   .text-gradient {
