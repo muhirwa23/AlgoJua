@@ -11,7 +11,12 @@ const generateSecureSecret = () => {
 
 const sanitizeEnvValue = (value) => {
   if (!value || typeof value !== 'string') return value;
-  return value.trim();
+  let sanitized = value.trim();
+  if ((sanitized.startsWith('"') && sanitized.endsWith('"')) || 
+      (sanitized.startsWith("'") && sanitized.endsWith("'"))) {
+    sanitized = sanitized.slice(1, -1);
+  }
+  return sanitized;
 };
 
 const parseIntSafe = (value, defaultValue) => {
@@ -26,7 +31,7 @@ export const config = {
   isProduction: process.env.NODE_ENV === 'production',
   port: parseIntSafe(process.env.PORT, 3001),
   host: sanitizeEnvValue(process.env.HOST) || '0.0.0.0',
-  baseUrl: sanitizeEnvValue(process.env.BASE_URL),
+    baseUrl: sanitizeEnvValue(process.env.BASE_URL) || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null),
   databaseUrl: sanitizeEnvValue(process.env.DATABASE_URL),
   dbPoolMax: Math.min(parseIntSafe(process.env.DB_POOL_MAX, 20), 100),
   dbIdleTimeout: parseIntSafe(process.env.DB_IDLE_TIMEOUT, 30000),
@@ -41,16 +46,22 @@ export const config = {
   resendApiKey: sanitizeEnvValue(process.env.RESEND_API_KEY),
   jwtSecret: cachedJwtSecret,
   jwtExpiresIn: sanitizeEnvValue(process.env.JWT_EXPIRES_IN) || '8h',
-  allowedOrigins: (() => {
-    const origins = process.env.ALLOWED_ORIGINS
-      ? process.env.ALLOWED_ORIGINS.split(',').map(o => sanitizeEnvValue(o)).filter(Boolean)
-      : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:5173', 'http://127.0.0.1:5173'];
-    
-    if (process.env.BASE_URL && !origins.includes(process.env.BASE_URL)) {
-      origins.push(sanitizeEnvValue(process.env.BASE_URL));
-    }
-    return origins;
-  })(),
+    allowedOrigins: (() => {
+      const origins = process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(',').map(o => sanitizeEnvValue(o)).filter(Boolean)
+        : ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:5173', 'http://127.0.0.1:5173'];
+      
+      const baseUrl = sanitizeEnvValue(process.env.BASE_URL);
+      if (baseUrl && !origins.includes(baseUrl)) {
+        origins.push(baseUrl);
+      }
+      
+      if (process.env.VERCEL_URL) {
+        const vercelUrl = `https://${process.env.VERCEL_URL}`;
+        if (!origins.includes(vercelUrl)) origins.push(vercelUrl);
+      }
+      return origins;
+    })(),
   requestTimeout: Math.min(parseIntSafe(process.env.REQUEST_TIMEOUT, 30000), 60000),
   adminPassword: sanitizeEnvValue(process.env.ADMIN_PASSWORD),
   bcryptRounds: parseIntSafe(process.env.BCRYPT_ROUNDS, 12),
@@ -66,7 +77,10 @@ export const validateConfig = () => {
   if (missing.length > 0) {
     const error = `FATAL: Missing required environment variables: ${missing.join(', ')}`;
     console.error(error);
-    if (config.isProduction) process.exit(1);
+    console.error('Please ensure these are set in your Vercel Project Settings > Environment Variables');
+    if (config.isProduction && !process.env.VERCEL) {
+      process.exit(1);
+    }
   }
 
   if (missingRecommended.length > 0 && config.isProduction) {
@@ -74,8 +88,8 @@ export const validateConfig = () => {
   }
 
   if (!config.baseUrl && config.isProduction) {
-    console.error('FATAL: BASE_URL environment variable is required in production');
-    process.exit(1);
+    console.error('FATAL: BASE_URL environment variable is required in production (or VERCEL_URL on Vercel)');
+    if (!process.env.VERCEL) process.exit(1);
   }
   
   if (!process.env.JWT_SECRET) {
