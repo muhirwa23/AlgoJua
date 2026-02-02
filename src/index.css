@@ -105,11 +105,15 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   html {
@@ -118,7 +122,8 @@
 
   /* Modern geometric headings */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
   }
 
   /* Monospace for code/tech elements */
@@ -130,7 +135,8 @@
 @layer utilities {
   /* Glassmorphism card */
   .glass-card {
-    @apply border border-border/50 rounded-2xl;
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 1rem;
     background-color: hsl(var(--card) / 0.6);
     -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
@@ -157,7 +163,7 @@
   }
 
   .card-hover {
-    @apply transition-all duration-500;
+    transition: all 0.5s ease-in-out;
     box-shadow: 0 4px 20px -4px hsl(var(--shadow-soft) / 0.3);
   }
 
@@ -167,7 +173,8 @@
   }
 
   .pill-nav {
-    @apply rounded-full backdrop-blur-xl border border-border/50;
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 9999px;
     background-color: hsl(var(--surface-elevated));
     -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
@@ -175,7 +182,8 @@
 
   /* Neon glow button */
   .neon-button {
-    @apply relative overflow-hidden;
+    position: relative;
+    overflow: hidden;
     box-shadow: var(--glow-primary);
     transition: all 0.3s ease;
   }
@@ -277,21 +285,25 @@
   .stagger-6 { animation-delay: 0.6s; opacity: 0; animation-fill-mode: forwards; }
 
   /* Category tags */
-  .tag-jobs { @apply text-background font-medium; background-color: hsl(var(--tag-jobs)); }
-  .tag-tools { @apply text-background font-medium; background-color: hsl(var(--tag-tools)); }
-  .tag-trends { @apply text-background font-medium; background-color: hsl(var(--tag-trends)); }
-  .tag-news { @apply text-background font-medium; background-color: hsl(var(--tag-news)); }
-  .tag-opportunities { @apply text-background font-medium; background-color: hsl(var(--tag-opportunities)); }
-  .tag-career { @apply text-background font-medium; background-color: hsl(var(--tag-career)); }
+  .tag-jobs { color: hsl(var(--background)); font-weight: 500; background-color: hsl(var(--tag-jobs)); }
+  .tag-tools { color: hsl(var(--background)); font-weight: 500; background-color: hsl(var(--tag-tools)); }
+  .tag-trends { color: hsl(var(--background)); font-weight: 500; background-color: hsl(var(--tag-trends)); }
+  .tag-news { color: hsl(var(--background)); font-weight: 500; background-color: hsl(var(--tag-news)); }
+  .tag-opportunities { color: hsl(var(--background)); font-weight: 500; background-color: hsl(var(--tag-opportunities)); }
+  .tag-career { color: hsl(var(--background)); font-weight: 500; background-color: hsl(var(--tag-career)); }
 
   /* Text gradient */
   .text-gradient {
-    @apply bg-clip-text text-transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
     background-image: linear-gradient(135deg, hsl(82 85% 55%), hsl(120 85% 50%));
   }
 
   .text-gradient-accent {
-    @apply bg-clip-text text-transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
     background-image: linear-gradient(135deg, hsl(180 85% 55%), hsl(200 85% 50%));
   }
 }
