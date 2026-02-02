@@ -31,27 +31,33 @@ export const securityMiddleware = (app) => {
   app.use(hpp());
   app.disable('x-powered-by');
 
-  const corsOptions = {
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true);
-      }
+    const corsOptions = {
+      origin: (origin, callback) => {
+        if (!origin || process.env.NODE_ENV !== 'production') {
+          return callback(null, true);
+        }
 
-      const isAllowed = config.allowedOrigins.includes(origin) || 
-                       origin.endsWith('.vercel.app') || 
-                       origin.includes('algojua.top');
+        const isAllowed = config.allowedOrigins.includes(origin) || 
+                         origin.endsWith('.vercel.app') || 
+                         origin.includes('algojua.top') ||
+                         origin.includes('localhost') ||
+                         origin.includes('127.0.0.1');
 
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    maxAge: 86400
-  };
+        if (isAllowed) {
+          callback(null, true);
+        } else {
+          // Instead of erroring, we can log and allow or just return false
+          console.warn(`[CORS] Rejected origin: ${origin}`);
+          callback(null, false);
+        }
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+      maxAge: 86400,
+      preflightContinue: false,
+      optionsSuccessStatus: 204
+    };
 
   app.use(cors(corsOptions));
 

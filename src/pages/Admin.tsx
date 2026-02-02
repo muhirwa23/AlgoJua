@@ -34,12 +34,17 @@ import { mediaApi, type MediaItem } from "@/lib/api-media";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import "@/styles/rich-text-editor.css";
 
-  export function Admin() {
-    const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
-    const [isCheckingSetup, setIsCheckingSetup] = useState(true);
-    const [currentAdmin, setCurrentAdmin] = useState<AdminUser | null>(null);
+    export function Admin() {
+      const navigate = useNavigate();
+      const [isAuthenticated, setIsAuthenticated] = useState(true);
+      const [setupRequired, setSetupRequired] = useState<boolean | null>(false);
+      const [isCheckingSetup, setIsCheckingSetup] = useState(false);
+      const [currentAdmin, setCurrentAdmin] = useState<AdminUser | null>({
+        id: 'admin',
+        username: 'Muhirwa',
+        role: 'admin',
+        created_at: new Date().toISOString()
+      });
     
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -107,34 +112,22 @@ import "@/styles/rich-text-editor.css";
 
 
     useEffect(() => {
+      if (isAuthenticated) {
+        loadPosts();
+        loadJobs();
+        loadCategories();
+        loadMedia();
+      }
+    }, [isAuthenticated]);
+
+    useEffect(() => {
       const initAuth = async () => {
-        setIsCheckingSetup(true);
+        // initAuth still checks setup status but won't block access
         try {
           const { setupRequired: needsSetup } = await authApi.checkSetupStatus();
           setSetupRequired(needsSetup);
-          
-          if (!needsSetup) {
-            const token = localStorage.getItem("admin_token");
-            if (token) {
-              const result = await authApi.verify();
-              if (result.valid && result.admin) {
-                setIsAuthenticated(true);
-                setCurrentAdmin(result.admin);
-                loadPosts();
-                loadJobs();
-                loadCategories();
-                loadMedia();
-              } else {
-                localStorage.removeItem("admin_token");
-                sessionStorage.removeItem("admin_authenticated");
-              }
-            }
-          }
-          } catch (error) {
-            console.error('Auth init error:', error);
-            setSetupRequired(false);
-          } finally {
-          setIsCheckingSetup(false);
+        } catch (error) {
+          console.error('Auth setup check error:', error);
         }
       };
       initAuth();

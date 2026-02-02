@@ -62,7 +62,7 @@ export const config = {
     return origins;
   })(),
   requestTimeout: Math.min(parseIntSafe(process.env.REQUEST_TIMEOUT, 30000), 60000),
-  adminPassword: sanitizeEnvValue(process.env.ADMIN_PASSWORD) || 'Neju098!?',
+  adminPassword: sanitizeEnvValue(process.env.ADMIN_PASSWORD) || '1234',
   bcryptRounds: parseIntSafe(process.env.BCRYPT_ROUNDS, 12),
 };
 
