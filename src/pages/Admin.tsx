@@ -19,7 +19,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { PlusCircle, Save, Eye, Trash2, Lock, Edit2, ArrowLeft, Upload, Image as ImageIcon, FolderOpen, Tag, BarChart3, Briefcase, User, KeyRound } from "lucide-react";
+import { PlusCircle, Save, Eye, Trash2, Lock, Edit2, ArrowLeft, Upload, Image as ImageIcon, FolderOpen, Tag, BarChart3, Briefcase, User, KeyRound, XCircle } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import { postsApi, jobsApi, authApi, uploadApi, type Post, type Job, type AdminUser } from "@/lib/api";
@@ -44,6 +44,7 @@ import "@/styles/rich-text-editor.css";
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [loginError, setLoginError] = useState<string | null>(null);
     
     const [activeTab, setActiveTab] = useState("dashboard");
     const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
@@ -61,25 +62,24 @@ import "@/styles/rich-text-editor.css";
     const [selectedPosts, setSelectedPosts] = useState<Set<string>>(new Set());
     
     const [formData, setFormData] = useState({
-
-    title: "",
-    subtitle: "",
-    category: "Tools",
-    readTime: "5 min",
-    image_url: "",
-    authorName: "",
-    authorAvatar: "",
-    authorBio: "",
-    introduction: "",
-    sections: [{ heading: "", content: "" }],
-    conclusion: "",
-    tags: "",
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-    ogImage: "",
-    slug: "",
-  });
+      title: "",
+      subtitle: "",
+      category: "Tools",
+      readTime: "5 min",
+      image_url: "",
+      authorName: "",
+      authorAvatar: "",
+      authorBio: "",
+      introduction: "",
+      sections: [{ heading: "", content: "" }],
+      conclusion: "",
+      tags: "",
+      metaTitle: "",
+      metaDescription: "",
+      metaKeywords: "",
+      ogImage: "",
+      slug: "",
+    });
 
     const [categoryFormData, setCategoryFormData] = useState({
       name: "",
@@ -168,30 +168,29 @@ import "@/styles/rich-text-editor.css";
     };
 
     const loadCategories = async () => {
+      try {
+        const fetchedCategories = await categoriesApi.fetchAll();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        toast.error("Failed to load categories");
+        console.error(error);
+      }
+    };
 
-    try {
-      const fetchedCategories = await categoriesApi.fetchAll();
-      setCategories(fetchedCategories);
-    } catch (error) {
-      toast.error("Failed to load categories");
-      console.error(error);
-    }
-  };
+    const loadMedia = async () => {
+      try {
+        console.log('🔄 Loading media from database...');
+        const fetchedMedia = await mediaApi.fetchAll();
+        console.log('✅ Fetched media:', fetchedMedia.length, 'items');
+        console.log('📋 Media data:', fetchedMedia);
+        setMedia(fetchedMedia);
+      } catch (error) {
+        toast.error("Failed to load media");
+        console.error('❌ Error loading media:', error);
+      }
+    };
 
-  const loadMedia = async () => {
-    try {
-      console.log('🔄 Loading media from database...');
-      const fetchedMedia = await mediaApi.fetchAll();
-      console.log('✅ Fetched media:', fetchedMedia.length, 'items');
-      console.log('📋 Media data:', fetchedMedia);
-      setMedia(fetchedMedia);
-    } catch (error) {
-      toast.error("Failed to load media");
-      console.error('❌ Error loading media:', error);
-    }
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type?: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -212,11 +211,11 @@ import "@/styles/rich-text-editor.css";
       const result = await uploadImageToR2(file);
       
       if (type === 'author') {
-        setFormData({ ...formData, authorAvatar: result.url });
+        setFormData(prev => ({ ...prev, authorAvatar: result.url }));
       } else if (type === 'og') {
-        setFormData({ ...formData, ogImage: result.url });
+        setFormData(prev => ({ ...prev, ogImage: result.url }));
       } else {
-        setFormData({ ...formData, image_url: result.url });
+        setFormData(prev => ({ ...prev, image_url: result.url }));
       }
       toast.success("Image uploaded successfully!");
     } catch (error) {
@@ -261,6 +260,7 @@ import "@/styles/rich-text-editor.css";
     };
 
     const handleLogin = async () => {
+      setLoginError(null);
       if (!username.trim()) {
         toast.error("Username is required");
         return;
@@ -282,144 +282,148 @@ import "@/styles/rich-text-editor.css";
         loadMedia();
         toast.success("Welcome to the admin portal!");
       } catch (error: any) {
-        toast.error(error.message || "Invalid credentials");
+        const message = error.message || "Invalid login";
+        setLoginError(message);
+        toast.error(message);
       } finally {
         setIsLoading(false);
       }
     };
 
 
-  const handleLogout = async () => {
-    try {
-      await authApi.logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-    setIsAuthenticated(false);
-    setCurrentAdmin(null);
-    sessionStorage.removeItem("admin_authenticated");
-    localStorage.removeItem("admin_token");
-    setUsername("");
-    setPassword("");
-    setConfirmPassword("");
-  };
+    const handleLogout = async () => {
+      try {
+        await authApi.logout();
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+      setIsAuthenticated(false);
+      setCurrentAdmin(null);
+      sessionStorage.removeItem("admin_authenticated");
+      localStorage.removeItem("admin_token");
+      setUsername("");
+      setPassword("");
+      setConfirmPassword("");
+    };
 
-  const addSection = () => {
-    setFormData({
-      ...formData,
-      sections: [...formData.sections, { heading: "", content: "" }],
-    });
-  };
+    const addSection = () => {
+      setFormData(prev => ({
+        ...prev,
+        sections: [...prev.sections, { heading: "", content: "" }],
+      }));
+    };
 
-  const updateSection = (index: number, field: "heading" | "content", value: string) => {
-    const newSections = [...formData.sections];
-    newSections[index][field] = value;
-    setFormData({ ...formData, sections: newSections });
-  };
+    const updateSection = (index: number, field: "heading" | "content", value: string) => {
+      setFormData(prev => {
+        const newSections = [...prev.sections];
+        newSections[index] = { ...newSections[index], [field]: value };
+        return { ...prev, sections: newSections };
+      });
+    };
 
-  const removeSection = (index: number) => {
-    setFormData({
-      ...formData,
-      sections: formData.sections.filter((_, i) => i !== index),
-    });
-  };
+    const removeSection = (index: number) => {
+      setFormData(prev => ({
+        ...prev,
+        sections: prev.sections.filter((_, i) => i !== index),
+      }));
+    };
 
-  const resetForm = () => {
-    setFormData({
-      title: "",
-      subtitle: "",
-      category: "Tools",
-      readTime: "5 min",
-      image_url: "",
-      authorName: "",
-      authorAvatar: "",
-      authorBio: "",
-      introduction: "",
-      sections: [{ heading: "", content: "" }],
-      conclusion: "",
-      tags: "",
-      metaTitle: "",
-      metaDescription: "",
-      metaKeywords: "",
-      ogImage: "",
-      slug: "",
-    });
-    setEditingId(null);
-  };
+    const resetForm = () => {
+      setFormData({
+        title: "",
+        subtitle: "",
+        category: "Tools",
+        readTime: "5 min",
+        image_url: "",
+        authorName: "",
+        authorAvatar: "",
+        authorBio: "",
+        introduction: "",
+        sections: [{ heading: "", content: "" }],
+        conclusion: "",
+        tags: "",
+        metaTitle: "",
+        metaDescription: "",
+        metaKeywords: "",
+        ogImage: "",
+        slug: "",
+      });
+      setEditingId(null);
+    };
 
-  const handleSave = async () => {
-    if (!formData.title || !formData.subtitle || !formData.introduction) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const slug = formData.slug || formData.title.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-
-      const postData = {
-        title: formData.title,
-        subtitle: formData.subtitle,
-        category: formData.category,
-        image_url: formData.image_url || "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1920&q=80",
-        author_name: formData.authorName,
-        author_bio: formData.authorBio,
-        author_avatar: formData.authorAvatar,
-        content_introduction: formData.introduction,
-        content_sections: formData.sections.filter(s => s.heading && s.content),
-        content_conclusion: formData.conclusion,
-        tags: formData.tags.split(",").map(t => t.trim()).filter(Boolean),
-        read_time: formData.readTime,
-        meta_title: formData.metaTitle || formData.title,
-        meta_description: formData.metaDescription || formData.subtitle,
-        meta_keywords: formData.metaKeywords.split(",").map(t => t.trim()).filter(Boolean),
-        og_image: formData.ogImage || formData.image_url,
-        slug: slug,
-      };
-
-      if (editingId) {
-        await postsApi.update(editingId, postData);
-        toast.success("Post updated successfully!");
-      } else {
-        await postsApi.create(postData);
-        toast.success("Post created successfully!");
+    const handleSave = async () => {
+      if (!formData.title || !formData.subtitle || !formData.introduction) {
+        toast.error("Please fill in all required fields");
+        return;
       }
 
-      await loadPosts();
-      resetForm();
-    } catch (error) {
-      toast.error(editingId ? "Failed to update post" : "Failed to create post");
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
+      try {
+        const slug = formData.slug || formData.title.toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
 
-  const handleEdit = (post: Post) => {
-    setFormData({
-      title: post.title,
-      subtitle: post.subtitle || "",
-      category: post.category,
-      readTime: post.read_time,
-      image_url: post.image_url,
-      authorName: post.author_name,
-      authorAvatar: post.author_avatar,
-      authorBio: post.author_bio,
-      introduction: post.content_introduction || "",
-      sections: post.content_sections.length > 0 ? post.content_sections : [{ heading: "", content: "" }],
-      conclusion: post.content_conclusion || "",
-      tags: post.tags.join(", "),
-      metaTitle: post.meta_title || "",
-      metaDescription: post.meta_description || "",
-      metaKeywords: post.meta_keywords?.join(", ") || "",
-      ogImage: post.og_image || "",
-      slug: post.slug || "",
-    });
-    setEditingId(post.id);
-    toast.info("Editing post");
-  };
+        const postData = {
+          title: formData.title,
+          subtitle: formData.subtitle,
+          category: formData.category,
+          image_url: formData.image_url || "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1920&q=80",
+          author_name: formData.authorName,
+          author_bio: formData.authorBio,
+          author_avatar: formData.authorAvatar,
+          content_introduction: formData.introduction,
+          content_sections: formData.sections.filter(s => s.heading && s.content),
+          content_conclusion: formData.conclusion,
+          tags: formData.tags.split(",").map(t => t.trim()).filter(Boolean),
+          read_time: formData.readTime,
+          meta_title: formData.metaTitle || formData.title,
+          meta_description: formData.metaDescription || formData.subtitle,
+          meta_keywords: formData.metaKeywords.split(",").map(t => t.trim()).filter(Boolean),
+          og_image: formData.ogImage || formData.image_url,
+          slug: slug,
+        };
+
+        if (editingId) {
+          await postsApi.update(editingId, postData);
+          toast.success("Post updated successfully!");
+        } else {
+          await postsApi.create(postData);
+          toast.success("Post created successfully!");
+        }
+
+        await loadPosts();
+        resetForm();
+      } catch (error) {
+        toast.error(editingId ? "Failed to update post" : "Failed to create post");
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const handleEdit = (post: Post) => {
+      setFormData({
+        title: post.title,
+        subtitle: post.subtitle || "",
+        category: post.category,
+        readTime: post.read_time,
+        image_url: post.image_url,
+        authorName: post.author_name,
+        authorAvatar: post.author_avatar,
+        authorBio: post.author_bio,
+        introduction: post.content_introduction || "",
+        sections: post.content_sections.length > 0 ? post.content_sections : [{ heading: "", content: "" }],
+        conclusion: post.content_conclusion || "",
+        tags: post.tags.join(", "),
+        metaTitle: post.meta_title || "",
+        metaDescription: post.meta_description || "",
+        metaKeywords: post.meta_keywords?.join(", ") || "",
+        ogImage: post.og_image || "",
+        slug: post.slug || "",
+      });
+      setEditingId(post.id);
+      toast.info("Editing post");
+    };
 
     const handleDelete = async (id: string) => {
       if (confirm("Are you sure you want to delete this post?")) {
@@ -562,23 +566,22 @@ import "@/styles/rich-text-editor.css";
     };
 
     const handleCategorySave = async (category: { name: string; slug: string; description: string; color: string; icon: string }) => {
+      try {
+        await categoriesApi.create(category);
+        await loadCategories();
+      } catch (error) {
+        throw error;
+      }
+    };
 
-    try {
-      await categoriesApi.create(category);
-      await loadCategories();
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const handleCategoryUpdate = async (id: string, category: Partial<{ name: string; slug: string; description: string; color: string; icon: string }>) => {
-    try {
-      await categoriesApi.update(id, category);
-      await loadCategories();
-    } catch (error) {
-      throw error;
-    }
-  };
+    const handleCategoryUpdate = async (id: string, category: Partial<{ name: string; slug: string; description: string; color: string; icon: string }>) => {
+      try {
+        await categoriesApi.update(id, category);
+        await loadCategories();
+      } catch (error) {
+        throw error;
+      }
+    };
 
     const handleCategoryDelete = async (id: string) => {
       try {
@@ -616,40 +619,40 @@ import "@/styles/rich-text-editor.css";
     };
 
     const handleMediaUpload = async (file: File, metadata?: { alt_text?: string; caption?: string }) => {
-    try {
-      await mediaApi.upload(file, metadata);
-      await loadMedia();
-    } catch (error) {
-      throw error;
-    }
-  };
+      try {
+        await mediaApi.upload(file, metadata);
+        await loadMedia();
+      } catch (error) {
+        throw error;
+      }
+    };
 
-  const handleMediaUpdate = async (id: string, updates: { alt_text?: string; caption?: string }) => {
-    try {
-      await mediaApi.update(id, updates);
-      await loadMedia();
-    } catch (error) {
-      throw error;
-    }
-  };
+    const handleMediaUpdate = async (id: string, updates: { alt_text?: string; caption?: string }) => {
+      try {
+        await mediaApi.update(id, updates);
+        await loadMedia();
+      } catch (error) {
+        throw error;
+      }
+    };
 
-  const handleMediaDelete = async (id: string) => {
-    try {
-      await mediaApi.delete(id);
-      await loadMedia();
-    } catch (error) {
-      throw error;
-    }
-  };
+    const handleMediaDelete = async (id: string) => {
+      try {
+        await mediaApi.delete(id);
+        await loadMedia();
+      } catch (error) {
+        throw error;
+      }
+    };
 
-  const handleMediaSearch = async (query: string) => {
-    try {
-      const searchResults = await mediaApi.search(query);
-      setMedia(searchResults);
-    } catch (error) {
-      toast.error("Failed to search media");
-    }
-  };
+    const handleMediaSearch = async (query: string) => {
+      try {
+        const searchResults = await mediaApi.search(query);
+        setMedia(searchResults);
+      } catch (error) {
+        toast.error("Failed to search media");
+      }
+    };
 
   if (isCheckingSetup) {
     return (
@@ -751,6 +754,12 @@ import "@/styles/rich-text-editor.css";
             <CardDescription>Enter your credentials to access the admin portal</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {loginError && (
+              <div className="bg-destructive/15 border border-destructive/50 text-destructive text-sm p-3 rounded-md flex items-center gap-2 animate-in fade-in zoom-in duration-200">
+                <XCircle className="w-4 h-4" />
+                {loginError}
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="login-username">Username</Label>
               <Input
@@ -825,7 +834,7 @@ import "@/styles/rich-text-editor.css";
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="bg-slate-900 border border-slate-800">
+            <TabsList className="bg-slate-900 border border-slate-800 w-full justify-start h-auto flex-wrap p-1">
               <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary">
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Dashboard

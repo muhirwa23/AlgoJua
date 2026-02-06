@@ -62,7 +62,7 @@ router.post('/login', authLimiter, async (req, res) => {
     
     if (!usernameValid || !passwordValid) {
       loginAttempts.set(ip, { count: attempts.count + 1, lastAttempt: Date.now() });
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid login' });
     }
     
     loginAttempts.delete(ip);
