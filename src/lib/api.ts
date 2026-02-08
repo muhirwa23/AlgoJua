@@ -98,26 +98,26 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
   };
-  
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  
+
   const response = await fetch(`${API_URL || ''}${endpoint}`, {
     ...options,
     headers,
   });
-  
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Request failed' }));
     throw new Error(error.error || `Request failed: ${response.statusText}`);
   }
-  
+
   return response.json();
 }
 
 export interface AdminUser {
-  id: number;
+  id: string;
   username: string;
   role: string;
 }
@@ -134,21 +134,21 @@ export const authApi = {
   async login(username: string, password: string): Promise<{ token: string; admin: AdminUser }> {
     const result = await apiRequest('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username: username || 'admin', password }),
     });
     localStorage.setItem('admin_token', result.token);
     return {
       token: result.token,
-      admin: { id: 1, username: username || 'admin', role: 'admin' }
+      admin: result.admin || { id: 'admin-1', username: username || 'admin', role: 'admin' }
     };
   },
 
   async verify(): Promise<{ valid: boolean; admin?: AdminUser }> {
     try {
       const result = await apiRequest('/api/auth/verify', { method: 'POST' });
-      return { 
-        valid: result.valid, 
-        admin: result.valid ? { id: 1, username: 'admin', role: 'admin' } : undefined 
+      return {
+        valid: result.valid,
+        admin: result.admin || (result.valid ? { id: 'admin-1', username: 'admin', role: 'admin' } : undefined)
       };
     } catch {
       return { valid: false };
@@ -159,6 +159,7 @@ export const authApi = {
     try {
       await apiRequest('/api/auth/logout', { method: 'POST' });
     } catch {
+      // Ignore logout errors
     }
     localStorage.removeItem('admin_token');
   },
@@ -174,7 +175,7 @@ export const postsApi = {
       const params = new URLSearchParams();
       if (filters?.category) params.append('category', filters.category);
       if (filters?.search) params.append('search', filters.search);
-      
+
       const queryString = params.toString();
       return await apiRequest(`/api/posts${queryString ? `?${queryString}` : ''}`);
     } catch (error) {
@@ -275,23 +276,23 @@ export const uploadApi = {
   async upload(file: File): Promise<{ url: string; key: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    
+
     const token = getAuthToken();
     const headers: HeadersInit = {};
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     const response = await fetch(`${API_URL || ''}/api/upload`, {
       method: 'POST',
       headers,
       body: formData,
     });
-    
+
     if (!response.ok) {
       throw new Error('Upload failed');
     }
-    
+
     return response.json();
   },
 
@@ -477,4 +478,44 @@ export const newsletterApi = {
   },
 };
 
+// Ad Placements API
+export interface AdPlacement {
+  id?: number;
+  zone_id: string;
+  name: string;
+  description?: string;
+  code: string;
+  is_active: boolean;
+  updated_at?: string;
+}
+
+export interface AdPlacementMap {
+  [zoneId: string]: {
+    name: string;
+    code: string;
+    isActive: boolean;
+  };
+}
+
+export const adsApi = {
+  // Public: Get all active ad placements (for rendering)
+  async fetchActive(): Promise<AdPlacementMap> {
+    return await apiRequest('/api/ads');
+  },
+
+  // Admin: Get all ad placements including inactive
+  async fetchAll(): Promise<AdPlacement[]> {
+    return await apiRequest('/api/ads/all');
+  },
+
+  // Admin: Update ad code for a specific zone
+  async update(zoneId: string, code: string, isActive: boolean = true): Promise<AdPlacement> {
+    return await apiRequest(`/api/ads/${zoneId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ code, is_active: isActive }),
+    });
+  },
+};
+
 export type { Post as PostType, CreatePostInput as CreatePostInputType, Job as JobType, CreateJobInput as CreateJobInputType };
+

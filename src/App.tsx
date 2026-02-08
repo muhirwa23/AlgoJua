@@ -10,10 +10,8 @@ import Article from "./pages/Article";
 import Wellness from "./pages/Wellness";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
-
 import Creativity from "./pages/Creativity";
 import Growth from "./pages/Growth";
-
 import Authors from "./pages/Authors";
 import StyleGuide from "./pages/StyleGuide";
 import Privacy from "./pages/Privacy";
@@ -26,36 +24,42 @@ import Unsubscribe from "./pages/Unsubscribe";
 
 const queryClient = new QueryClient();
 
+/**
+ * Main App Component
+ * 
+ * Note: Google AdSense Auto Ads script is loaded in index.html (not here).
+ * Auto Ads are managed entirely by Google - no manual ad components needed.
+ */
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <SpeedInsights />
-      <Analytics />
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <SpeedInsights />
+        <Analytics />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/article/:id" element={<Article />} />
           <Route path="/blog/:slug" element={<Article />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
-            <Route path="/wellness" element={<Wellness />} />
-            <Route path="/creativity" element={<Creativity />} />
-            <Route path="/growth" element={<Growth />} />
-            <Route path="/authors" element={<Authors />} />
-            <Route path="/style-guide" element={<StyleGuide />} />
+          <Route path="/wellness" element={<Wellness />} />
+          <Route path="/creativity" element={<Creativity />} />
+          <Route path="/growth" element={<Growth />} />
+          <Route path="/authors" element={<Authors />} />
+          <Route path="/style-guide" element={<StyleGuide />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
-            <Route path="/muhirwa" element={<Admin />} />
+          <Route path="/muhirwa" element={<Admin />} />
           <Route path="/aggregator-dashboard" element={<AggregatorDashboard />} />
           <Route path="/confirm/:token" element={<ConfirmSubscription />} />
           <Route path="/unsubscribe/:token" element={<Unsubscribe />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+      </TooltipProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

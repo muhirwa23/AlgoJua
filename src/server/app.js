@@ -13,6 +13,7 @@ import jobRoutes from './routes/jobs.js';
 import categoryRoutes from './routes/categories.js';
 import newsletterRoutes from './routes/newsletter.js';
 import mediaRoutes from './routes/media.js';
+import adsRoutes from './routes/ads.js';
 
 // Validate configuration
 validateConfig();
@@ -44,11 +45,16 @@ const sanitizeObject = (obj) => {
   if (!obj || typeof obj !== 'object') return obj;
   const sanitized = {};
   for (const [key, value] of Object.entries(obj)) {
+    // Skip sanitization for ad code field (needs to preserve HTML/JS)
+    if (key === 'code' && typeof value === 'string') {
+      sanitized[key] = value;
+      continue;
+    }
     if (key.toLowerCase().includes('password') || key.toLowerCase() === 'email') {
       sanitized[key] = typeof value === 'string' ? validator.trim(value) : value;
       continue;
     }
-    
+
     if (typeof value === 'string') {
       sanitized[key] = sanitizeString(value);
     } else if (Array.isArray(value)) {
@@ -76,11 +82,12 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/media', mediaRoutes);
+app.use('/api/ads', adsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     timestamp: new Date().toISOString(),
     env: config.nodeEnv
   });
