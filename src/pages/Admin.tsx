@@ -36,15 +36,10 @@ import "@/styles/rich-text-editor.css";
 
     export function Admin() {
       const navigate = useNavigate();
-      const [isAuthenticated, setIsAuthenticated] = useState(true);
-      const [setupRequired, setSetupRequired] = useState<boolean | null>(false);
-      const [isCheckingSetup, setIsCheckingSetup] = useState(false);
-      const [currentAdmin, setCurrentAdmin] = useState<AdminUser | null>({
-        id: 'admin',
-        username: 'Muhirwa',
-        role: 'admin',
-        created_at: new Date().toISOString()
-      });
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [setupRequired, setSetupRequired] = useState<boolean | null>(false);
+    const [isCheckingSetup, setIsCheckingSetup] = useState(true);
+    const [currentAdmin, setCurrentAdmin] = useState<AdminUser | null>(null);
     
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -122,12 +117,23 @@ import "@/styles/rich-text-editor.css";
 
     useEffect(() => {
       const initAuth = async () => {
-        // initAuth still checks setup status but won't block access
         try {
-          const { setupRequired: needsSetup } = await authApi.checkSetupStatus();
-          setSetupRequired(needsSetup);
+          // Check if we already have a valid token
+          const token = localStorage.getItem('admin_token');
+          if (token) {
+            const { valid } = await authApi.verify();
+            if (valid) {
+              setIsAuthenticated(true);
+              setCurrentAdmin({ id: 1, username: 'admin', role: 'admin' });
+            } else {
+              localStorage.removeItem('admin_token');
+            }
+          }
         } catch (error) {
-          console.error('Auth setup check error:', error);
+          console.error('Auth check error:', error);
+          localStorage.removeItem('admin_token');
+        } finally {
+          setIsCheckingSetup(false);
         }
       };
       initAuth();

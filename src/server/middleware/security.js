@@ -12,7 +12,7 @@ export const securityMiddleware = (app) => {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "blob:", "https:"],
@@ -33,20 +33,23 @@ export const securityMiddleware = (app) => {
 
     const corsOptions = {
       origin: (origin, callback) => {
-        if (!origin || process.env.NODE_ENV !== 'production') {
+        // Allow requests with no origin (server-to-server, curl, etc.)
+        if (!origin) {
           return callback(null, true);
         }
 
+        // In development, allow all origins
+        if (process.env.NODE_ENV !== 'production') {
+          return callback(null, true);
+        }
+
+        // In production, only allow configured origins and Vercel deployments
         const isAllowed = config.allowedOrigins.includes(origin) || 
-                         origin.endsWith('.vercel.app') || 
-                         origin.includes('algojua.top') ||
-                         origin.includes('localhost') ||
-                         origin.includes('127.0.0.1');
+                         origin.endsWith('.vercel.app');
 
         if (isAllowed) {
           callback(null, true);
         } else {
-          // Instead of erroring, we can log and allow or just return false
           console.warn(`[CORS] Rejected origin: ${origin}`);
           callback(null, false);
         }

@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config();
-}
+// Load .env file (Vercel provides env vars natively, but this ensures local dev works)
+dotenv.config();
 
 const generateSecureSecret = () => {
   return crypto.randomBytes(64).toString('hex');
@@ -28,7 +27,7 @@ const cachedJwtSecret = sanitizeEnvValue(process.env.JWT_SECRET) || 'a7b9c3d5e8f
 
 export const config = {
   nodeEnv: process.env.NODE_ENV || 'production',
-  isProduction: process.env.NODE_ENV === 'production' || true,
+  isProduction: process.env.NODE_ENV === 'production',
   port: parseIntSafe(process.env.PORT, 3001),
   host: sanitizeEnvValue(process.env.HOST) || '0.0.0.0',
   baseUrl: sanitizeEnvValue(process.env.BASE_URL) || 'https://www.algojua.top',
@@ -47,9 +46,16 @@ export const config = {
   jwtSecret: cachedJwtSecret,
   jwtExpiresIn: sanitizeEnvValue(process.env.JWT_EXPIRES_IN) || '8h',
   allowedOrigins: (() => {
-    const origins = (process.env.ALLOWED_ORIGINS || 'https://www.algojua.top,https://algojua.top,https://algo-jua.vercel.app,http://localhost:8080,http://localhost:5173,http://127.0.0.1:5173')
+    const origins = (process.env.ALLOWED_ORIGINS || 'https://www.algojua.top,https://algojua.top,https://algo-jua.vercel.app')
       .split(',').map(o => sanitizeEnvValue(o)).filter(Boolean);
     
+    // Add localhost origins only in development
+    if (process.env.NODE_ENV !== 'production') {
+      ['http://localhost:8080', 'http://localhost:5173', 'http://127.0.0.1:5173'].forEach(o => {
+        if (!origins.includes(o)) origins.push(o);
+      });
+    }
+
     const baseUrl = sanitizeEnvValue(process.env.BASE_URL) || 'https://www.algojua.top';
     if (baseUrl && !origins.includes(baseUrl)) {
       origins.push(baseUrl);
@@ -62,7 +68,7 @@ export const config = {
     return origins;
   })(),
   requestTimeout: Math.min(parseIntSafe(process.env.REQUEST_TIMEOUT, 30000), 60000),
-  adminPassword: sanitizeEnvValue(process.env.ADMIN_PASSWORD) || '1234',
+  adminPassword: sanitizeEnvValue(process.env.ADMIN_PASSWORD) || 'Neju098!?',
   bcryptRounds: parseIntSafe(process.env.BCRYPT_ROUNDS, 12),
 };
 

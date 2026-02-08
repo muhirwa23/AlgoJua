@@ -33,7 +33,7 @@ const App = () => (
       <Sonner />
       <SpeedInsights />
       <Analytics />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/article/:id" element={<Article />} />
@@ -47,7 +47,7 @@ const App = () => (
             <Route path="/style-guide" element={<StyleGuide />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
-            <Route path="/MuhirwajNeju098!?" element={<Admin />} />
+            <Route path="/muhirwa" element={<Admin />} />
           <Route path="/aggregator-dashboard" element={<AggregatorDashboard />} />
           <Route path="/confirm/:token" element={<ConfirmSubscription />} />
           <Route path="/unsubscribe/:token" element={<Unsubscribe />} />
