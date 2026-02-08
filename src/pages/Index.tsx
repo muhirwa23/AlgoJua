@@ -73,7 +73,7 @@ const Index = () => {
         <section id="articles" className="py-12">
           <div className="flex items-center justify-between mb-12 animate-slide-up">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Latest Articles</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-primary">Latest Articles</h2>
               <p className="text-muted-foreground mt-2">Fresh insights on jobs, tools, and trends</p>
             </div>
             <a href="#all" className="hidden sm:flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors group">

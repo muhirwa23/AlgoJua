@@ -148,7 +148,7 @@ export function Jobs() {
 
           <div className="flex items-center justify-between mb-12 animate-slide-up">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Featured Jobs</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-primary">Featured Jobs</h2>
               <p className="text-muted-foreground mt-2">Hand-picked opportunities from top companies</p>
             </div>
           </div>
