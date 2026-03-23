@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>R2 CORS Test</title>
+</head>
+<body>
+  <h1>Testing R2 CORS Configuration</h1>
+  <button id="testBtn">Test Upload</button>
+  <pre id="result"></pre>
+  
+  <script>
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const result = document.getElementById('result');
+      result.textContent = 'Testing...';
+      
+      try {
+        const testUrl = 'https://muhirwa.533ff639afbd08fda6f465e095a0b439.r2.cloudflarestorage.com/test-cors.txt';
+        
+        // Test OPTIONS preflight
+        const response = await fetch(testUrl, {
+          method: 'OPTIONS',
+          headers: {
+            'Origin': window.location.origin,
+            'Access-Control-Request-Method': 'PUT',
+            'Access-Control-Request-Headers': 'content-type'
+          }
+        });
+        
+        result.textContent = `OPTIONS Response:\nStatus: ${response.status}\n`;
+        
+        for (const [key, value] of response.headers.entries()) {
+          if (key.toLowerCase().includes('access-control')) {
+            result.textContent += `${key}: ${value}\n`;
+          }
+        }
+        
+        if (!response.ok) {
+          result.textContent += '\n❌ CORS preflight failed!\n';
+          result.textContent += 'Make sure you configured CORS in Cloudflare R2 settings.';
+        } else {
+          result.textContent += '\n✅ CORS appears to be working!';
+        }
+      } catch (error) {
+        result.textContent = `Error: ${error.message}\n\n`;
+        result.textContent += 'This likely means CORS is NOT configured correctly.';
+      }
+    });
+  </script>
+</body>
+</html>

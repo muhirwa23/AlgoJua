@@ -1,0 +1,323 @@
+import { useState, useEffect } from "react";
+import { useParams, Navigate } from "react-router-dom";
+import Header from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import ArticleCard from "@/components/ArticleCard";
+import { postsApi, type Post } from "@/lib/api";
+import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { FollowItForm } from "@/components/FollowItForm";
+import { marked } from 'marked';
+
+const Article = () => {
+  const { id, slug } = useParams<{ id?: string; slug?: string }>();
+  const [post, setPost] = useState<Post | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    const loadPost = async () => {
+      const identifier = slug || id;
+      if (!identifier) {
+        setNotFound(true);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const fetchedPost = slug 
+          ? await postsApi.fetchBySlug(slug)
+          : await postsApi.fetchById(identifier);
+        if (!fetchedPost) {
+          setNotFound(true);
+        } else {
+          setPost(fetchedPost);
+          
+          const allPosts = await postsApi.fetchAll();
+          const related = allPosts
+            .filter(p => p.id !== fetchedPost.id && p.category === fetchedPost.category)
+            .slice(0, 3);
+          setRelatedPosts(related);
+        }
+      } catch (error) {
+        console.error('Failed to load post:', error);
+        setNotFound(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPost();
+  }, [id, slug]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-slate-800 rounded w-3/4 mx-auto"></div>
+            <div className="h-4 bg-slate-800 rounded w-1/2 mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound || !post) {
+    return <Navigate to="/" replace />;
+  }
+
+  const article = {
+    id: post.id,
+    title: post.title,
+    subtitle: post.subtitle || '',
+    category: post.category,
+    date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTime: post.read_time,
+    image: post.image_url,
+    author: {
+      name: post.author_name,
+    },
+    content: {
+      introduction: post.content_introduction || '',
+      sections: post.content_sections,
+      conclusion: post.content_conclusion || '',
+    },
+    tags: post.tags ? post.tags.split(',').map(t => t.trim()) : [],
+  };
+
+  const relatedArticles = relatedPosts.map(p => ({
+    id: p.id,
+    title: p.title,
+    subtitle: p.subtitle || '',
+    category: p.category,
+    date: new Date(p.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTime: p.read_time,
+    image: p.image_url,
+    slug: p.slug,
+    author: {
+      name: p.author_name,
+    },
+    tags: p.tags ? p.tags.split(',').map(t => t.trim()) : [],
+  }));
+
+  const getShareUrl = () => {
+    const baseUrl = window.location.origin;
+    const postSlug = post?.slug || id;
+    return `${baseUrl}/blog/${postSlug}`;
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(getShareUrl());
+    toast.success("Link copied to clipboard!");
+  };
+
+  const getCategoryClass = (cat: string) => {
+    const normalized = cat.toLowerCase();
+    if (normalized.includes("financ")) return "tag-financing";
+    if (normalized.includes("lifestyle")) return "tag-lifestyle";
+    if (normalized.includes("community")) return "tag-community";
+    if (normalized.includes("wellness")) return "tag-wellness";
+    if (normalized.includes("travel")) return "tag-travel";
+    if (normalized.includes("creativ")) return "tag-creativity";
+    if (normalized.includes("growth")) return "tag-growth";
+    return "tag-lifestyle";
+  };
+
+  return (
+    <div className="min-h-screen bg-background animate-fade-in">
+      <Header />
+      
+      <main>
+        {/* Back Navigation */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <a
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to articles
+          </a>
+        </div>
+
+        {/* Hero Image */}
+        <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] mb-12">
+          <img
+            src={article.image}
+            alt={article.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+        </div>
+
+        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
+          {/* Article Header */}
+          <div className="mb-12 animate-slide-up">
+            <div className="flex items-center gap-3 mb-6">
+              <span className={`px-4 py-2 rounded-full text-sm font-medium ${getCategoryClass(article.category)}`}>
+                {article.category}
+              </span>
+              <span className="text-sm text-muted-foreground">{article.date}</span>
+              <span className="text-sm text-muted-foreground">•</span>
+              <span className="text-sm text-muted-foreground">{article.readTime} read</span>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+              {article.title}
+            </h1>
+            
+            <p className="text-xl text-muted-foreground mb-8">
+              {article.subtitle}
+            </p>
+
+            {/* Author Info */}
+            <div className="flex items-center justify-between border-t border-b border-border py-6">
+              <div className="flex items-center gap-4">
+                <div>
+                  <p className="font-semibold">{article.author.name}</p>
+                </div>
+              </div>
+
+              {/* Share Buttons */}
+              <div className="hidden md:flex items-center gap-2">
+                <button
+                  onClick={handleCopyLink}
+                  className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                  aria-label="Copy link"
+                >
+                  <Link2 className="w-4 h-4" />
+                </button>
+                <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                    aria-label="Share on Twitter"
+                  >
+                    <Twitter className="w-4 h-4" />
+                  </a>
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                    aria-label="Share on Facebook"
+                  >
+                    <Facebook className="w-4 h-4" />
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                  aria-label="Share on LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Article Content */}
+          <div className="prose prose-lg prose-invert max-w-none mb-16 animate-slide-up stagger-2">
+            <div 
+              className="rich-text-content mb-8"
+              dangerouslySetInnerHTML={{ __html: marked.parse(article.content.introduction) }}
+            />
+
+            <div 
+              className="rich-text-content mb-10"
+              dangerouslySetInnerHTML={{ __html: marked.parse(article.content.sections) }}
+            />
+
+            {article.content.conclusion && (
+              <div className="mt-12 p-6 rounded-2xl bg-muted border-l-4 border-primary">
+                <div 
+                  className="italic rich-text-content"
+                  dangerouslySetInnerHTML={{ __html: marked.parse(article.content.conclusion) }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Tags */}
+          <div className="mb-12 pb-12 border-b border-border">
+            <div className="flex flex-wrap gap-3">
+              {article.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-4 py-2 rounded-full text-sm bg-muted text-foreground"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Share Buttons */}
+          <div className="md:hidden mb-12 pb-12 border-b border-border">
+            <p className="text-sm font-semibold mb-4">Share this article</p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleCopyLink}
+                className="flex-1 py-3 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center gap-2"
+              >
+                <Link2 className="w-4 h-4" />
+                <span className="text-sm">Copy link</span>
+              </button>
+              <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(getShareUrl())}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                  aria-label="Share on Twitter"
+                >
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-muted transition-all flex items-center justify-center"
+                aria-label="Share on Facebook"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+          {/* Newsletter CTA */}
+          <div className="mb-16 rounded-2xl bg-card p-8 md:p-12 text-center border border-border/50">
+            <h3 className="text-2xl md:text-3xl font-bold mb-4">Enjoyed this article?</h3>
+            <p className="text-muted-foreground mb-6">
+              Subscribe to receive more insights like this directly in your inbox.
+            </p>
+            <div className="max-w-md mx-auto">
+              <FollowItForm />
+            </div>
+          </div>
+        </article>
+
+        {/* Related Articles */}
+        <section className="bg-muted py-16 animate-fade-in">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold mb-8 animate-slide-up">You might also like</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedArticles.map((relatedArticle, index) => (
+                <div key={relatedArticle.id} className={`animate-slide-up stagger-${Math.min(index + 1, 3)}`}>
+                  <ArticleCard {...relatedArticle} size="small" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Article;

@@ -1,0 +1,352 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Algo Jua Design System - Modern Gen-Z Tech Aesthetic */
+
+@layer base {
+  :root {
+    /* Dark-first modern tech palette with electric accents */
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Electric lime accent - bold Gen-Z vibe */
+    --primary: 82 85% 55%;
+    --primary-foreground: 240 10% 4%;
+
+    --secondary: 240 5% 16%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 55%;
+
+    /* Cyan accent for variety */
+    --accent: 180 85% 55%;
+    --accent-foreground: 240 10% 4%;
+
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5% 18%;
+    --input: 240 5% 18%;
+    --ring: 82 85% 55%;
+
+    --radius: 1rem;
+
+    /* Category tag colors */
+    --tag-jobs: 82 85% 55%;
+    --tag-tools: 180 85% 55%;
+    --tag-trends: 280 75% 60%;
+    --tag-news: 35 95% 55%;
+    --tag-opportunities: 330 85% 60%;
+    --tag-career: 200 85% 55%;
+
+    /* Gradient tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(82 85% 55%), hsl(120 85% 45%));
+    --gradient-accent: linear-gradient(135deg, hsl(180 85% 55%), hsl(200 85% 50%));
+    --gradient-hero: linear-gradient(180deg, hsl(240 10% 8%) 0%, hsl(240 10% 4%) 100%);
+    
+    /* Glow effects */
+    --glow-primary: 0 0 40px hsl(82 85% 55% / 0.3);
+    --glow-accent: 0 0 40px hsl(180 85% 55% / 0.3);
+    
+    /* Surface tokens */
+    --surface-elevated: 240 10% 10%;
+    --shadow-soft: 0 0% 0%;
+  }
+
+  .dark {
+    /* Same as root - dark-first design */
+  }
+
+  /* Light mode override for accessibility */
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 240 10% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 8%;
+
+    --primary: 82 85% 40%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 5% 92%;
+    --secondary-foreground: 240 10% 8%;
+
+    --muted: 240 5% 94%;
+    --muted-foreground: 240 5% 40%;
+
+    --accent: 180 85% 35%;
+    --accent-foreground: 0 0% 98%;
+
+    --border: 240 5% 88%;
+    --input: 240 5% 88%;
+    --ring: 82 85% 40%;
+
+    --tag-jobs: 82 75% 45%;
+    --tag-tools: 180 75% 40%;
+    --tag-trends: 280 65% 50%;
+    --tag-news: 35 85% 50%;
+    --tag-opportunities: 330 75% 55%;
+    --tag-career: 200 75% 45%;
+
+    --surface-elevated: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Modern geometric headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+
+  /* Monospace for code/tech elements */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism card */
+  .glass-card {
+    @apply border border-border/50 rounded-2xl;
+    background-color: hsl(var(--card) / 0.6);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+
+  /* Gradient border effect */
+  .gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: 1rem;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(82 85% 55% / 0.5), hsl(180 85% 55% / 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .card-hover {
+    @apply transition-all duration-500 hover:scale-[1.02];
+    box-shadow: 0 4px 20px -4px hsl(var(--shadow-soft) / 0.3);
+  }
+
+  .card-hover:hover {
+    box-shadow: var(--glow-primary);
+  }
+
+  .pill-nav {
+    @apply rounded-full backdrop-blur-xl border border-border/50;
+    background-color: hsl(var(--surface-elevated));
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+
+  /* Neon glow button */
+  .neon-button {
+    @apply relative overflow-hidden;
+    box-shadow: var(--glow-primary);
+    transition: all 0.3s ease;
+  }
+
+  .neon-button:hover {
+    box-shadow: 0 0 60px hsl(82 85% 55% / 0.5);
+    transform: translateY(-2px);
+  }
+
+  /* Grid pattern background */
+  .grid-pattern {
+    background-image: 
+      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Floating animation */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Pulse glow */
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px hsl(82 85% 55% / 0.3); }
+    50% { box-shadow: 0 0 40px hsl(82 85% 55% / 0.5); }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  /* Slide animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.8s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.6s ease-out;
+  }
+
+  /* Stagger animations */
+  .stagger-1 { animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards; }
+  .stagger-2 { animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards; }
+  .stagger-3 { animation-delay: 0.3s; opacity: 0; animation-fill-mode: forwards; }
+  .stagger-4 { animation-delay: 0.4s; opacity: 0; animation-fill-mode: forwards; }
+  .stagger-5 { animation-delay: 0.5s; opacity: 0; animation-fill-mode: forwards; }
+  .stagger-6 { animation-delay: 0.6s; opacity: 0; animation-fill-mode: forwards; }
+
+  /* Category tags */
+  .tag-jobs { @apply bg-[hsl(var(--tag-jobs))] text-background font-medium; }
+  .tag-tools { @apply bg-[hsl(var(--tag-tools))] text-background font-medium; }
+  .tag-trends { @apply bg-[hsl(var(--tag-trends))] text-background font-medium; }
+  .tag-news { @apply bg-[hsl(var(--tag-news))] text-background font-medium; }
+  .tag-opportunities { @apply bg-[hsl(var(--tag-opportunities))] text-background font-medium; }
+  .tag-career { @apply bg-[hsl(var(--tag-career))] text-background font-medium; }
+
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(82 85% 55%), hsl(120 85% 50%));
+  }
+
+  .text-gradient-accent {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(180 85% 55%), hsl(200 85% 50%));
+  }
+
+  /* Rich Text Styles */
+  .rich-text-content {
+    @apply break-words;
+  }
+
+  .rich-text-content p {
+    @apply mb-6 leading-relaxed text-muted-foreground;
+  }
+
+  .rich-text-content h1, 
+  .rich-text-content h2, 
+  .rich-text-content h3 {
+    @apply mt-10 mb-6 font-display font-bold text-foreground;
+  }
+
+  .rich-text-content ul, 
+  .rich-text-content ol {
+    @apply mb-6 ml-6 space-y-2 text-muted-foreground;
+  }
+
+  .rich-text-content ul {
+    @apply list-disc;
+  }
+
+  .rich-text-content ol {
+    @apply list-decimal;
+  }
+
+  .rich-text-content li {
+    @apply leading-relaxed;
+  }
+
+  .rich-text-content a {
+    @apply text-primary underline underline-offset-4 decoration-primary/30 hover:decoration-primary transition-all;
+  }
+
+  .rich-text-content code {
+    @apply px-1.5 py-0.5 rounded bg-muted text-accent font-mono text-sm;
+  }
+
+  .rich-text-content pre {
+    @apply p-4 rounded-xl bg-muted overflow-x-auto mb-6 border border-border/50;
+  }
+
+  .rich-text-content pre code {
+    @apply p-0 bg-transparent text-foreground;
+  }
+
+  .rich-text-content blockquote {
+    @apply pl-6 border-l-4 border-primary italic text-muted-foreground mb-6;
+  }
+
+  .rich-text-content img {
+    @apply rounded-2xl border border-border/50 my-10;
+  }
+}

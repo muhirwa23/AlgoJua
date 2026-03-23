@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algo Jua</title>
+    <description>Expert insights on Jobs, AI Tools, Trends, and Opportunities</description>
+    <link>https://algojua.com</link>
+    <language>en</language>
+    <lastBuildDate>Wed, 11 Dec 2025 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://algojua.com/rss.xml" rel="self" type="application/rss+xml"/>
+    <!-- RSS feed items are dynamically generated from database -->
+  </channel>
+</rss>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Algo Jua</title>
+  <subtitle>Expert insights on Jobs, AI Tools, Trends, and Opportunities</subtitle>
+  <link href="https://algojua.com"/>
+  <id>https://algojua.com</id>
+  <updated>2025-12-11T00:00:00Z</updated>
+  <author>
+    <name>Algo Jua Team</name>
+  </author>
+  <!-- Atom feed entries are dynamically generated from database -->
+</feed>
