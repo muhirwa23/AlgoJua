@@ -31,8 +31,8 @@ const Travel = () => {
     image: post.image_url,
     author: {
       name: post.author_name,
-      avatar: post.author_avatar,
-      bio: post.author_bio,
+      avatar: "",
+      bio: "",
     },
     tags: post.tags,
   }));

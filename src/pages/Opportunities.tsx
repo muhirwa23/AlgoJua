@@ -201,11 +201,8 @@ export function Opportunities() {
                   title={opp.title}
                   category={opp.type}
                   date={`Deadline: ${opp.deadline}`}
-                  metric={opp.value}
-                  summary={`${opp.organization} • ${opp.value} • ${opp.applicants} interested`}
                   image={opp.image}
                   size="small" 
-                  type="opportunities"
                 />
               </div>
             ))}

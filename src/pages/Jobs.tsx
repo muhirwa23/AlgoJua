@@ -42,8 +42,8 @@ export function Jobs() {
     category: job.category,
     salary: job.salary,
     image: job.image_url,
-    tags: job.tags,
-    applicants: job.applicants
+    tags: [],
+    applicants: "0"
   }));
 
   return (

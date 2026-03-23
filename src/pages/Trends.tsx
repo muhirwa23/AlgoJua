@@ -152,26 +152,13 @@ export function Trends() {
               {trendPosts.map((trend, index) => (
                 <div key={trend.id} className={`animate-slide-up stagger-${Math.min(index + 1, 6)}`}>
                   <ArticleCard 
-                    id={trend.id}
-                    title={trend.title}
-                    subtitle={trend.subtitle}
-                    category={trend.category}
-                    date={new Date(trend.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    readTime={trend.read_time}
-                    image={trend.image_url}
-                    author={{
-                      name: trend.author_name,
-                      avatar: trend.author_avatar,
-                      bio: trend.author_bio
-                    }}
-                    content={{
-                      introduction: trend.content_introduction || "",
-                      sections: trend.content_sections,
-                      conclusion: trend.content_conclusion || ""
-                    }}
-                    tags={trend.tags}
-                    size="small"
-                  />
+                      id={trend.id}
+                      title={trend.title}
+                      category={trend.category}
+                      date={new Date(trend.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      image={trend.image_url}
+                      size="small"
+                    />
                 </div>
               ))}
             </div>

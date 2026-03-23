@@ -190,11 +190,8 @@ export function AITools() {
                   title={tool.name}
                   category={tool.category}
                   date={tool.pricing}
-                  metric={`${tool.rating}★`}
-                  summary={`${tool.pricing} • ${tool.description}`}
                   image={tool.image}
                   size="small"
-                  type="tools"
                 />
               </div>
             ))}

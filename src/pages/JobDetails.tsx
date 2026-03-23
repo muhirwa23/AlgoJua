@@ -191,7 +191,7 @@ export function JobDetails() {
                             <span>{recJob.location}</span>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            {recJob.tags.slice(0, 3).map((tag) => (
+                            {((recJob as any).tags || []).slice(0, 3).map((tag: string) => (
                               <Badge 
                                 key={tag}
                                 variant="outline"

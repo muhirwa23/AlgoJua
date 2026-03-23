@@ -36,8 +36,8 @@ const Index = () => {
     slug: post.slug,
     author: {
       name: post.author_name,
-      avatar: post.author_avatar,
-      bio: post.author_bio,
+      avatar: "",
+      bio: "",
     },
     tags: post.tags,
   }));
