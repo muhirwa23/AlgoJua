@@ -46,7 +46,7 @@ venv/
 env/
 .env/
 bin/
-lib/
+# lib/ - This was incorrectly ignoring src/lib
 share/
 Include/
 Scripts/
