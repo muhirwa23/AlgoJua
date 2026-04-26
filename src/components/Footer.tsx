@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border mt-16 bg-card/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <h3 className="font-semibold mb-4 text-primary">Categories</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
@@ -27,6 +27,31 @@ export function Footer() {
               <li>
                 <a href="/wellness" className="hover:text-primary transition-colors">
                   Wellness
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-4 text-primary">Company</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>
+                <a href="/about" className="hover:text-primary transition-colors">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="hover:text-primary transition-colors">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a href="/privacy" className="hover:text-primary transition-colors">
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="/terms" className="hover:text-primary transition-colors">
+                  Terms of Service
                 </a>
               </li>
             </ul>

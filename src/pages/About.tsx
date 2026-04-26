@@ -1,8 +1,30 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { pagesApi, type Page } from "@/lib/api";
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
 const About = () => {
+  const [page, setPage] = useState<Page | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const fetchedPage = await pagesApi.fetchBySlug('about');
+        if (fetchedPage && fetchedPage.content) {
+          setPage(fetchedPage);
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic about page from Contentful");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPage();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background animate-fade-in">
       <Header />
@@ -11,13 +33,25 @@ const About = () => {
         {/* Hero Section */}
         <div className="mb-16 text-center space-y-6">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-slide-down">
-            About Perspective
+            {page ? page.title : 'About AlgoJua'}
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed animate-slide-up stagger-1">
             A space for exploring ideas, finding inspiration, and discovering new ways of seeing the world.
           </p>
         </div>
 
+        {isLoading ? (
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-card rounded w-full"></div>
+            <div className="h-4 bg-card rounded w-5/6"></div>
+            <div className="h-4 bg-card rounded w-3/4"></div>
+          </div>
+        ) : page && page.content ? (
+           <div className="prose prose-lg max-w-none space-y-8 dark:prose-invert">
+              {documentToReactComponents(page.content)}
+           </div>
+        ) : (
+        <>
         {/* Story Section */}
         <section className="mb-16 space-y-6 text-muted-foreground animate-slide-up stagger-2">
           <h2 className="text-3xl font-bold text-foreground mb-6">Our Story</h2>
@@ -96,6 +130,8 @@ const About = () => {
             </div>
           </div>
         </section>
+        </>
+        )}
 
         {/* CTA Section */}
         <section className="text-center py-12 rounded-2xl bg-card">

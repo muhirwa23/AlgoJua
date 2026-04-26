@@ -11,64 +11,38 @@ interface ArticleCardProps {
 }
 
 const ArticleCard = ({ id, title, category, date, image, slug, size = "small" }: ArticleCardProps) => {
-  const getCategoryClass = (cat: string) => {
-    const normalized = cat.toLowerCase();
-    if (normalized.includes("job")) return "tag-jobs";
-    if (normalized.includes("tool")) return "tag-tools";
-    if (normalized.includes("trend")) return "tag-trends";
-    if (normalized.includes("news")) return "tag-news";
-    if (normalized.includes("opportunit")) return "tag-opportunities";
-    if (normalized.includes("career")) return "tag-career";
-    return "tag-tools";
-  };
-
   const articleUrl = slug ? `/blog/${slug}` : `/article/${id}`;
 
   return (
     <a
       href={articleUrl}
-      className={`group relative block rounded-[2.5rem] overflow-hidden card-hover ${
+      className={`group flex flex-col gap-4 cursor-pointer block ${
         size === "large" ? "col-span-1 md:col-span-2 row-span-2" : ""
       }`}
     >
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted rounded-[2.5rem]">
+      {/* Image container */}
+      <div className="relative w-full aspect-[3/2] overflow-hidden rounded-xl bg-muted">
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-opacity"
         />
-        
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-        
-        {/* Content overlay */}
-        <div className="absolute inset-0 p-8 flex flex-col justify-between">
-          {/* Top section - Category and Date */}
-          <div className="flex items-start justify-between">
-            <span className={`px-4 py-1.5 rounded-full text-xs font-medium backdrop-blur-md ${getCategoryClass(category)} bg-opacity-80`}>
-              {category}
-            </span>
-            <span className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-medium text-white border border-white/30">
-              {date}
-            </span>
-          </div>
-
-          {/* Bottom section - Title and Arrow */}
-          <div className="flex items-end justify-between gap-4">
-            <div className="flex-1">
-              <span className="text-white/50 text-xs font-medium tracking-wider block mb-3">{id}</span>
-              <h3 className="text-white text-xl md:text-2xl lg:text-3xl font-bold leading-tight tracking-tight">
-                {title}
-              </h3>
-            </div>
-          </div>
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <span className="text-white font-medium text-lg flex items-center gap-2">
+            Read More
+          </span>
         </div>
+      </div>
 
-        {/* Floating circular arrow button - positioned outside content overlay */}
-        <div className="absolute bottom-6 right-6 floating-button">
-          <ArrowUpRight className="w-5 h-5" />
-        </div>
+      {/* Content */}
+      <div className="flex flex-col gap-1.5 px-0.5">
+        <h3 className="text-xl md:text-2xl font-serif text-foreground leading-snug tracking-tight group-hover:text-primary transition-colors">
+          {title}
+        </h3>
+        <span className="text-[13px] text-muted-foreground font-mono mt-1 tracking-tight">
+          {date}
+        </span>
       </div>
     </a>
   );

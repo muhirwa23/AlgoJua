@@ -1,109 +1,133 @@
 import { ArrowRight, Zap, TrendingUp, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  articleCount?: number;
+}
+
+const HeroSection = ({ articleCount = 0 }: HeroSectionProps) => {
   return (
-    <section className="relative rounded-[2rem] overflow-hidden bg-card my-8 animate-fade-in grid-pattern">
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-card via-card/95 to-transparent" />
+    <section className="relative w-full rounded-[2.5rem] overflow-hidden bg-[#0A0A0A] my-8 border border-white/5 shadow-2xl">
+      {/* Soft atmospheric gradient background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-80" />
       
-      <div className="relative z-10 grid md:grid-cols-2 gap-8 md:gap-12 p-6 md:p-12 lg:p-16">
-        {/* Left side - Content */}
-        <div className="flex flex-col justify-center space-y-6 md:space-y-8">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 w-fit animate-slide-down">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Your Tech Career Starts Here</span>
+      {/* Minimal grid pattern fading out at the bottom */}
+      <div 
+        className="absolute inset-0 grid-pattern opacity-[0.15]" 
+        style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)' }} 
+      />
+
+      <div className="relative z-10 grid lg:grid-cols-2 gap-12 lg:gap-8 p-8 md:p-12 lg:p-20">
+        
+        {/* Left Content Area */}
+        <div className="flex flex-col justify-center space-y-8 max-w-xl mx-auto lg:mx-0">
+          
+          {/* Subtle animated badge */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 w-fit backdrop-blur-md animate-fade-in shadow-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            <span className="text-xs font-mono tracking-wide text-foreground/80 uppercase">
+              Your Tech Career Starts Here
+            </span>
           </div>
 
-          <div className="space-y-4 md:space-y-6">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight animate-slide-up">
+          <div className="space-y-6">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-[1.05] tracking-tight animate-slide-up text-white">
               Stay Ahead in
-              <span className="text-gradient block mt-2">Tech & Careers</span>
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/80 to-emerald-400 mt-2 block">
+                Tech & Careers
+              </span>
             </h1>
-            <p className="text-muted-foreground text-lg md:text-xl leading-relaxed max-w-xl animate-slide-up stagger-1">
-              Your go-to source for tech job opportunities, emerging tools, industry trends, and career insights. 
-              No fluff, just actionable content.
+            <p className="text-muted-foreground text-lg md:text-xl leading-relaxed font-light animate-slide-up stagger-1">
+              Your definitive source for tech job opportunities, emerging developer tools, industry trends, and deep career insights.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 animate-slide-up stagger-2">
+          <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 animate-slide-up stagger-2">
             <Button 
               onClick={() => {
                 const el = document.getElementById('articles');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="bg-[#c8e64a] hover:bg-[#b8d63a] text-black rounded-full px-8 py-6 text-base font-medium group transition-all duration-300 hover:scale-105"
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-medium shadow-[0_0_30px_hsl(var(--primary)/0.25)] transition-all hover:scale-105"
             >
               Explore Articles
-              <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
 
             <Button 
               onClick={() => window.location.href = '/jobs'}
               variant="outline" 
-              className="rounded-full px-8 py-6 text-base font-medium border-2 border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-white transition-all duration-300 hover:scale-105"
+              className="w-full sm:w-auto rounded-full px-8 py-6 text-base font-medium border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all hover:scale-105 backdrop-blur-md"
             >
               Browse Jobs
             </Button>
           </div>
 
-          {/* Stats */}
-          <div className="flex items-center gap-8 pt-6 animate-slide-up stagger-3">
-            <div className="text-center">
-              <p className="text-2xl md:text-3xl font-bold text-gradient">50K+</p>
-              <p className="text-sm text-muted-foreground">Readers</p>
+          {/* Minimalist Stats row */}
+          <div className="flex items-center gap-8 md:gap-12 pt-8 animate-slide-up stagger-3 border-t border-white/5 mt-8">
+            <div className="flex flex-col gap-1 pt-6">
+              <span className="text-3xl font-display font-medium text-white">50K+</span>
+              <span className="text-sm font-light text-muted-foreground uppercase tracking-wider">Readers</span>
             </div>
-            <div className="w-px h-12 bg-border" />
-            <div className="text-center">
-              <p className="text-2xl md:text-3xl font-bold text-gradient-accent">200+</p>
-              <p className="text-sm text-muted-foreground">Articles</p>
+            <div className="flex flex-col gap-1 pt-6">
+              <span className="text-3xl font-display font-medium text-white">{articleCount > 0 ? articleCount : '...'}</span>
+              <span className="text-sm font-light text-muted-foreground uppercase tracking-wider">Articles</span>
             </div>
-            <div className="w-px h-12 bg-border" />
-            <div className="text-center">
-              <p className="text-2xl md:text-3xl font-bold text-gradient">Weekly</p>
-              <p className="text-sm text-muted-foreground">Updates</p>
+            <div className="flex flex-col gap-1 pt-6">
+              <span className="text-3xl font-display font-medium text-white">Weekly</span>
+              <span className="text-sm font-light text-muted-foreground uppercase tracking-wider">Updates</span>
             </div>
           </div>
         </div>
 
-        {/* Right side - Feature Cards */}
-        <div className="flex flex-col gap-4 justify-center">
-          <div className="glass-card p-6 hover:scale-[1.02] transition-all cursor-pointer group animate-scale-in stagger-1">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[hsl(var(--tag-jobs))] flex items-center justify-center flex-shrink-0">
-                <Briefcase className="w-6 h-6 text-background" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Job Opportunities</h3>
-                <p className="text-muted-foreground text-sm mt-1">Curated remote and on-site tech roles from top companies</p>
-              </div>
-            </div>
-          </div>
+        {/* Right Feature Area - Floating Sleek Cards */}
+        <div className="flex flex-col gap-4 justify-center lg:pl-10 relative mt-10 lg:mt-0">
+          {/* Subtle background glow for the right section */}
+          <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[120%] h-3/4 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
 
-          <div className="glass-card p-6 hover:scale-[1.02] transition-all cursor-pointer group animate-scale-in stagger-2">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[hsl(var(--tag-tools))] flex items-center justify-center flex-shrink-0">
-                <Zap className="w-6 h-6 text-background" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg group-hover:text-accent transition-colors">New Tools</h3>
-                <p className="text-muted-foreground text-sm mt-1">Discover the latest AI tools and developer utilities</p>
+          {[
+            {
+              icon: Briefcase,
+              title: "Job Opportunities",
+              desc: "Remote & on-site tech roles handpicked from top engineering teams.",
+              delay: "stagger-1"
+            },
+            {
+              icon: Zap,
+              title: "New Tools",
+              desc: "Discover the absolute best AI platforms and new developer utilities.",
+              delay: "stagger-2"
+            },
+            {
+              icon: TrendingUp,
+              title: "Tech Trends",
+              desc: "Stay informed on architectural shifts and what's radically shaping the industry.",
+              delay: "stagger-3"
+            }
+          ].map((feature, i) => (
+            <div 
+              key={i} 
+              className={`group relative p-6 rounded-2xl bg-white/[0.03] border border-white/[0.05] hover:border-white/10 hover:bg-white/[0.06] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] cursor-pointer animate-scale-in ${feature.delay}`}
+            >
+              <div className="flex items-start gap-5 relative z-10">
+                <div className="mt-0.5 flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-500 shrink-0">
+                  <feature.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-white/90 group-hover:text-white transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground/80 text-sm font-light mt-2 leading-relaxed">
+                    {feature.desc}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="glass-card p-6 hover:scale-[1.02] transition-all cursor-pointer group animate-scale-in stagger-3">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[hsl(var(--tag-trends))] flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-background" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Tech Trends</h3>
-                <p className="text-muted-foreground text-sm mt-1">Stay informed on what's shaping the industry</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

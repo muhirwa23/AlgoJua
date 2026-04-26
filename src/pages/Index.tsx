@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [totalArticles, setTotalArticles] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
         const fetchedPosts = await postsApi.fetchAll();
+        setTotalArticles(fetchedPosts.length);
         setPosts(fetchedPosts.slice(0, 6));
       } catch (error) {
         console.error('Failed to load posts:', error);
@@ -48,19 +50,31 @@ const Index = () => {
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
-        <HeroSection />
+        <HeroSection articleCount={totalArticles} />
 
         {/* Featured Articles Grid */}
         <section id="articles" className="py-12">
-          <div className="flex items-center justify-between mb-12 animate-slide-up">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Latest Articles</h2>
-              <p className="text-muted-foreground mt-2">Fresh insights on jobs, tools, and trends</p>
+          {/* Topics and Search Filter */}
+          <div className="mb-8 animate-slide-up flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <button className="font-semibold text-lg flex items-center gap-1.5 focus:outline-none">
+                Topics <span className="text-[10px]">^</span>
+              </button>
             </div>
-            <a href="#all" className="hidden sm:flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors group">
-              View all 
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </a>
+            <div className="flex flex-wrap items-center gap-3">
+              {['Company', 'Developers', 'Enterprise', 'Research', 'Security', 'Updates'].map(topic => (
+                <button key={topic} className="px-4 py-1.5 bg-secondary/60 text-secondary-foreground text-sm font-medium hover:bg-secondary/80 rounded-full transition-colors">
+                  {topic}
+                </button>
+              ))}
+            </div>
+            <div className="w-full max-w-xl mt-2">
+              <input 
+                type="text" 
+                placeholder="Search articles" 
+                className="w-full px-4 py-2 bg-transparent border border-input/50 rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
           </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

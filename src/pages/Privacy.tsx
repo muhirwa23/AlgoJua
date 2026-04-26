@@ -1,6 +1,29 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
+import { pagesApi, type Page } from "@/lib/api";
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
 const Privacy = () => {
+  const [page, setPage] = useState<Page | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const fetchedPage = await pagesApi.fetchBySlug('privacy');
+        // Only trigger CMS override if the content property actually exists
+        if (fetchedPage && fetchedPage.content) {
+          setPage(fetchedPage);
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic privacy page from Contentful");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPage();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background animate-fade-in">
       <Header />
@@ -9,18 +32,29 @@ const Privacy = () => {
         {/* Hero Section */}
         <div className="mb-12 space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight animate-slide-down">
-            Privacy Policy
+            {page ? page.title : 'Privacy Policy'}
           </h1>
           <p className="text-muted-foreground animate-slide-up stagger-1">
             Last updated: March 20, 2025
           </p>
         </div>
 
+        {isLoading ? (
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-card rounded w-full"></div>
+            <div className="h-4 bg-card rounded w-5/6"></div>
+            <div className="h-4 bg-card rounded w-3/4"></div>
+          </div>
+        ) : page && page.content ? (
+           <div className="prose prose-lg max-w-none space-y-8 dark:prose-invert">
+              {documentToReactComponents(page.content)}
+           </div>
+        ) : (
         <div className="prose prose-lg max-w-none space-y-8">
           <section>
             <h2 className="text-2xl font-bold mb-4">Introduction</h2>
             <p className="text-muted-foreground">
-              At Perspective, we take your privacy seriously. This Privacy Policy explains how we collect, 
+              At AlgoJua, we take your privacy seriously. This Privacy Policy explains how we collect, 
               use, disclose, and safeguard your information when you visit our website and subscribe to our newsletter.
             </p>
           </section>
@@ -65,11 +99,17 @@ const Privacy = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4">Cookies and Tracking Technologies</h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-4">
               We use cookies and similar tracking technologies to track activity on our website and store 
               certain information. You can instruct your browser to refuse all cookies or to indicate when 
-              a cookie is being sent. However, if you do not accept cookies, you may not be able to use 
-              some portions of our website.
+              a cookie is being sent. Default browser settings usually accept cookies.
+            </p>
+            <h3 className="text-xl font-semibold mb-3 mt-6">Google AdSense and DoubleClick Cookie</h3>
+            <p className="text-muted-foreground mb-4">
+              Google, as a third-party vendor, uses cookies to serve ads on AlgoJua. Google's use of the DoubleClick cookie enables it and its partners to serve ads to our users based on their visit to our site or other sites on the Internet.
+            </p>
+            <p className="text-muted-foreground mb-4">
+              You may opt out of the use of the DoubleClick Cookie for interest-based advertising by visiting the <a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google Ads Settings</a> web page.
             </p>
           </section>
 
@@ -126,11 +166,12 @@ const Privacy = () => {
               If you have any questions about this Privacy Policy, please contact us at:
             </p>
             <p className="text-muted-foreground mt-4">
-              Email: privacy@perspective.blog<br />
-              Address: San Francisco, CA
+              Email: privacy@algojua.top<br />
+              Address: Global
             </p>
           </section>
         </div>
+        )}
       </main>
     </div>
   );

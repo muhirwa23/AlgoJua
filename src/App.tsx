@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
+import CookieConsent from "@/components/CookieConsent";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import Wellness from "./pages/Wellness";
@@ -18,6 +19,8 @@ import Authors from "./pages/Authors";
 import StyleGuide from "./pages/StyleGuide";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ConfirmSubscription from "./pages/ConfirmSubscription";
 import Unsubscribe from "./pages/Unsubscribe";
@@ -31,6 +34,7 @@ const App = () => (
       <Sonner />
       <SpeedInsights />
       <Analytics />
+      <CookieConsent />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -45,6 +49,8 @@ const App = () => (
             <Route path="/style-guide" element={<StyleGuide />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/confirm/:token" element={<ConfirmSubscription />} />
           <Route path="/unsubscribe/:token" element={<Unsubscribe />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

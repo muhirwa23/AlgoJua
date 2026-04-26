@@ -1,6 +1,28 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
+import { pagesApi, type Page } from "@/lib/api";
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
 const Terms = () => {
+  const [page, setPage] = useState<Page | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const fetchedPage = await pagesApi.fetchBySlug('terms');
+        if (fetchedPage && fetchedPage.content) {
+          setPage(fetchedPage);
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic terms page from Contentful");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPage();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background animate-fade-in">
       <Header />
@@ -9,13 +31,24 @@ const Terms = () => {
         {/* Hero Section */}
         <div className="mb-12 space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight animate-slide-down">
-            Terms of Service
+            {page ? page.title : 'Terms of Service'}
           </h1>
           <p className="text-muted-foreground animate-slide-up stagger-1">
             Last updated: March 20, 2025
           </p>
         </div>
 
+        {isLoading ? (
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-card rounded w-full"></div>
+            <div className="h-4 bg-card rounded w-5/6"></div>
+            <div className="h-4 bg-card rounded w-3/4"></div>
+          </div>
+        ) : page && page.content ? (
+           <div className="prose prose-lg max-w-none space-y-8 dark:prose-invert">
+              {documentToReactComponents(page.content)}
+           </div>
+        ) : (
         <div className="prose prose-lg max-w-none space-y-8">
           <section>
             <h2 className="text-2xl font-bold mb-4">Agreement to Terms</h2>
@@ -127,6 +160,7 @@ const Terms = () => {
             </p>
           </section>
         </div>
+        )}
       </main>
     </div>
   );

@@ -47,6 +47,17 @@ export interface Category {
   updated_at: string;
 }
 
+export interface Page {
+  id: string;
+  title: string;
+  slug: string;
+  // Using any here assuming content is Contentful Rich Text Document
+  // In a strict setup, you would import { Document } from '@contentful/rich-text-types'
+  content: any;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface MediaItem {
   id: string;
   filename: string;
@@ -131,6 +142,21 @@ const mapEntryToCategory = (entry: any): Category => {
     description: fields.description || '',
     color: fields.color || '#000',
     icon: fields.icon || '',
+    created_at: sys.createdAt,
+    updated_at: sys.updatedAt,
+  };
+};
+
+// Helper to map Contentful Entry to Page
+const mapEntryToPage = (entry: any): Page => {
+  const fields = entry.fields;
+  const sys = entry.sys;
+  
+  return {
+    id: sys.id,
+    title: fields.title || '',
+    slug: fields.slug || '',
+    content: fields.content || null,
     created_at: sys.createdAt,
     updated_at: sys.updatedAt,
   };
@@ -295,6 +321,26 @@ export const categoriesApi = {
       );
       return response.items.length > 0 ? mapEntryToCategory(response.items[0]) : null;
     } catch (error) {
+      return null;
+    }
+  },
+};
+
+export const pagesApi = {
+  async fetchBySlug(slug: string): Promise<Page | null> {
+    try {
+      const response = await client.getEntries(
+        buildContentModelQuery({
+          contentType: 'page',
+          limit: 1,
+          filters: {
+            'fields.slug': slug,
+          },
+        }),
+      );
+      return response.items.length > 0 ? mapEntryToPage(response.items[0]) : null;
+    } catch (error) {
+      console.error(`Error fetching page ${slug}:`, error);
       return null;
     }
   },
