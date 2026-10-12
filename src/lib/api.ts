@@ -51,11 +51,41 @@ export interface Page {
   id: string;
   title: string;
   slug: string;
-  // Using any here assuming content is Contentful Rich Text Document
-  // In a strict setup, you would import { Document } from '@contentful/rich-text-types'
-  content: any;
+  content: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
+}
+
+interface ContentfulAsset {
+  fields?: {
+    file?: {
+      url?: string;
+      fileName?: string;
+      contentType?: string;
+      details?: {
+        size?: number;
+        image?: {
+          width?: number;
+          height?: number;
+        };
+      };
+    };
+    title?: string;
+  };
+  sys?: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+interface ContentfulEntry {
+  sys: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  fields: Record<string, unknown>;
 }
 
 export interface MediaItem {
@@ -83,80 +113,82 @@ interface QueryOptions {
 }
 
 // Helper to map Contentful Entry to Post
-const mapEntryToPost = (entry: any): Post => {
-  const fields = entry.fields;
+const mapEntryToPost = (entry: ContentfulEntry): Post => {
+  const fields = entry.fields || {};
   const sys = entry.sys;
+  const featuredImage = fields.featuredImage as ContentfulAsset | undefined;
   
   return {
     id: sys.id,
-    title: fields.title || '',
-    subtitle: fields.subtitle || '',
-    slug: fields.slug || '',
-    category: fields.category || 'General',
-    image_url: fields.featuredImage?.fields?.file?.url ? `https:${fields.featuredImage.fields.file.url}` : null,
-    author_name: fields.authorName || 'Algo Jua',
-    content_introduction: fields.introduction || '',
-    content_sections: fields.sections || '',
-    content_conclusion: fields.conclusion || '',
-    tags: fields.tags || '',
-    read_time: fields.readTime || '5 min read',
-    date: fields.date || sys.createdAt,
+    title: (fields.title as string) || '',
+    subtitle: (fields.subtitle as string) || '',
+    slug: (fields.slug as string) || '',
+    category: (fields.category as string) || 'General',
+    image_url: featuredImage?.fields?.file?.url ? `https:${featuredImage.fields.file.url}` : null,
+    author_name: (fields.authorName as string) || 'Algo Jua',
+    content_introduction: (fields.introduction as string) || '',
+    content_sections: (fields.sections as string) || '',
+    content_conclusion: (fields.conclusion as string) || '',
+    tags: (fields.tags as string) || '',
+    read_time: (fields.readTime as string) || '5 min read',
+    date: (fields.date as string) || sys.createdAt,
     created_at: sys.createdAt,
     updated_at: sys.updatedAt,
-    meta_title: fields.metaTitle || fields.title || '',
-    meta_description: fields.metaDescription || fields.subtitle || '',
-    meta_keywords: fields.metaKeywords || '',
+    meta_title: (fields.metaTitle as string) || (fields.title as string) || '',
+    meta_description: (fields.metaDescription as string) || (fields.subtitle as string) || '',
+    meta_keywords: (fields.metaKeywords as string) || '',
   };
 };
 
 // Helper to map Contentful Entry to Job
-const mapEntryToJob = (entry: any): Job => {
-  const fields = entry.fields;
+const mapEntryToJob = (entry: ContentfulEntry): Job => {
+  const fields = entry.fields || {};
   const sys = entry.sys;
+  const image = fields.image as ContentfulAsset | undefined;
 
   return {
     id: sys.id,
-    title: fields.title || '',
-    company: fields.company || '',
-    location: fields.location || '',
-    type: fields.type || 'Full-time',
-    category: fields.category || 'Tech',
-    salary: fields.salary || 'Competitive',
-    image_url: fields.image?.fields?.file?.url ? `https:${fields.image.fields.file.url}` : '',
-    description: fields.description || '',
-    date_posted: fields.datePosted || sys.createdAt,
+    title: (fields.title as string) || '',
+    company: (fields.company as string) || '',
+    location: (fields.location as string) || '',
+    type: (fields.type as string) || 'Full-time',
+    category: (fields.category as string) || 'Tech',
+    salary: (fields.salary as string) || 'Competitive',
+    image_url: image?.fields?.file?.url ? `https:${image.fields.file.url}` : '',
+    description: (fields.description as string) || '',
+    date_posted: (fields.datePosted as string) || sys.createdAt,
     created_at: sys.createdAt,
     updated_at: sys.updatedAt,
   };
 };
 
 // Helper to map Contentful Entry to Category
-const mapEntryToCategory = (entry: any): Category => {
-  const fields = entry.fields;
+const mapEntryToCategory = (entry: ContentfulEntry): Category => {
+  const fields = entry.fields || {};
   const sys = entry.sys;
   
   return {
     id: sys.id,
-    name: fields.name || '',
-    slug: fields.slug || '',
-    description: fields.description || '',
-    color: fields.color || '#000',
-    icon: fields.icon || '',
+    name: (fields.name as string) || '',
+    slug: (fields.slug as string) || '',
+    description: (fields.description as string) || '',
+    color: (fields.color as string) || '#000',
+    icon: (fields.icon as string) || '',
     created_at: sys.createdAt,
     updated_at: sys.updatedAt,
   };
 };
 
 // Helper to map Contentful Entry to Page
-const mapEntryToPage = (entry: any): Page => {
-  const fields = entry.fields;
+const mapEntryToPage = (entry: ContentfulEntry): Page => {
+  const fields = entry.fields || {};
   const sys = entry.sys;
   
   return {
     id: sys.id,
-    title: fields.title || '',
-    slug: fields.slug || '',
-    content: fields.content || null,
+    title: (fields.title as string) || '',
+    slug: (fields.slug as string) || '',
+    content: (fields.content as Record<string, unknown>) || null,
     created_at: sys.createdAt,
     updated_at: sys.updatedAt,
   };
@@ -350,18 +382,18 @@ export const mediaApi = {
   async fetchAll(): Promise<MediaItem[]> {
     try {
       const response = await client.getAssets();
-      return response.items.map((asset: any) => ({
-        id: asset.sys.id,
-        filename: asset.fields.file.fileName,
-        url: `https:${asset.fields.file.url}`,
-        r2_key: asset.sys.id,
-        file_type: asset.fields.file.contentType,
-        file_size: asset.fields.file.details.size,
-        width: asset.fields.file.details.image?.width,
-        height: asset.fields.file.details.image?.height,
-        alt_text: asset.fields.title,
-        created_at: asset.sys.createdAt,
-        updated_at: asset.sys.updatedAt,
+      return response.items.map((asset: ContentfulAsset) => ({
+        id: asset.sys?.id || '',
+        filename: asset.fields?.file?.fileName || '',
+        url: asset.fields?.file?.url ? `https:${asset.fields.file.url}` : '',
+        r2_key: asset.sys?.id || '',
+        file_type: asset.fields?.file?.contentType || '',
+        file_size: asset.fields?.file?.details?.size || 0,
+        width: asset.fields?.file?.details?.image?.width,
+        height: asset.fields?.file?.details?.image?.height,
+        alt_text: asset.fields?.title || '',
+        created_at: asset.sys?.createdAt || '',
+        updated_at: asset.sys?.updatedAt || '',
       }));
     } catch (error) {
       return [];

@@ -3,10 +3,32 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Calendar, DollarSign, TrendingUp, Building2, Globe, Clock, Zap, Users, Tag, MapPin, CheckCircle2, Rocket, Briefcase } from "lucide-react";
 
+export interface DetailItemData {
+  id?: string;
+  title?: string;
+  name?: string;
+  company?: string;
+  organization?: string;
+  location?: string;
+  type?: string;
+  category?: string;
+  salary?: string;
+  pricing?: string;
+  value?: string;
+  growth?: string;
+  views?: string | number;
+  date?: string;
+  deadline?: string;
+  description?: string;
+  image?: string;
+  tags?: string[];
+  applicants?: string | number;
+}
+
 interface DetailsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  data: any;
+  data: DetailItemData | null;
   type: "jobs" | "tools" | "trends" | "opportunities";
 }
 

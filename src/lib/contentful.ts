@@ -10,14 +10,14 @@ if (!space || !accessToken) {
 }
 
 export const client = createClient({
-  space: space || '',
-  accessToken: accessToken || '',
+  space: space || 'placeholder_space',
+  accessToken: accessToken || 'placeholder_token',
   environment,
 });
 
 export const previewClient = createClient({
-  space: space || '',
-  accessToken: previewToken || '',
+  space: space || 'placeholder_space',
+  accessToken: previewToken || 'placeholder_token',
   host: 'preview.contentful.com',
   environment,
 });

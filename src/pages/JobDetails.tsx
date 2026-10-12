@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { jobsApi, type Job } from "@/lib/api";
 import { marked } from 'marked';
+import { trackEvent } from "@/lib/analytics";
 
 export function JobDetails() {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +41,11 @@ export function JobDetails() {
           setJob(null);
         } else {
           setJob(fetchedJob);
+          trackEvent("job_detail_view", {
+            job_id: fetchedJob.id,
+            job_title: fetchedJob.title,
+            company: fetchedJob.company,
+          });
           
           const allJobs = await jobsApi.fetchAll();
           const recommended = allJobs
@@ -191,7 +197,7 @@ export function JobDetails() {
                             <span>{recJob.location}</span>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            {((recJob as any).tags || []).slice(0, 3).map((tag: string) => (
+                            {[(recJob.category), (recJob.type)].filter(Boolean).map((tag: string) => (
                               <Badge 
                                 key={tag}
                                 variant="outline"
@@ -217,7 +223,16 @@ export function JobDetails() {
                 <p className="text-sm text-muted-foreground mb-6">
                   Please mention that you found this job on Perspective when applying.
                 </p>
-                <Button className="w-full rounded-full py-6 text-base font-medium neon-button group">
+                <Button
+                  className="w-full rounded-full py-6 text-base font-medium neon-button group"
+                  onClick={() => {
+                    trackEvent("job_apply_click", {
+                      job_id: job.id,
+                      job_title: job.title,
+                      company: job.company,
+                    });
+                  }}
+                >
                   Apply Now
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>

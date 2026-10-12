@@ -54,6 +54,17 @@ export function Footer() {
                   Terms of Service
                 </a>
               </li>
+              <li>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.dispatchEvent(new CustomEvent("algojua_open_consent_modal"));
+                  }}
+                  className="hover:text-primary transition-colors text-left text-muted-foreground"
+                >
+                  Cookie Preferences
+                </button>
+              </li>
             </ul>
           </div>
           <div>

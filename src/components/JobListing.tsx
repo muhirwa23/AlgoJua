@@ -15,6 +15,8 @@ export interface Job {
   image: string;
   tags: string[];
   applicants: string;
+  isSponsored?: boolean;
+  isFeatured?: boolean;
 }
 
 interface JobListingProps {
@@ -47,13 +49,29 @@ export function JobListing({ jobs }: JobListingProps) {
               <div className="flex-1 space-y-3 min-w-0 w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                      {job.title}
-                    </h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                        {job.title}
+                      </h3>
+                      {job.isFeatured && (
+                        <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[11px] uppercase tracking-wider font-semibold">
+                          Featured
+                        </Badge>
+                      )}
+                      {job.isSponsored && (
+                        <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-[11px] uppercase tracking-wider font-semibold">
+                          Sponsored
+                        </Badge>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <span className="font-medium text-foreground/80">{job.company}</span>
-                      <span>•</span>
-                      <span className="text-sm">{job.applicants} applicants</span>
+                      {job.applicants && job.applicants !== "0" && (
+                        <>
+                          <span>•</span>
+                          <span className="text-sm">{job.applicants} applicants</span>
+                        </>
+                      )}
                     </div>
                   </div>
                   

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { trackEvent } from '@/lib/analytics';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -20,6 +21,7 @@ export function ConfirmSubscription() {
           setStatus('success');
           setMessage('Your subscription has been confirmed!');
           setEmail('Successfully confirmed');
+          trackEvent('newsletter_signup_success', { token });
         } catch {
           setStatus('error');
           setMessage('An error occurred. Please try again later.');

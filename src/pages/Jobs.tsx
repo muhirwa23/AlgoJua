@@ -5,6 +5,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Briefcase, MapPin, ArrowRight, Building2, TrendingUp, Users, Globe } from "lucide-react";
 import { jobsApi, type Job } from "@/lib/api";
+import { AdUnit } from "@/components/AdUnit";
 
 export function Jobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -158,7 +159,14 @@ export function Jobs() {
                   ))}
                 </div>
               ) : featuredJobs.length > 0 ? (
-                <JobListing jobs={featuredJobs} />
+                <>
+                  <JobListing jobs={featuredJobs} />
+                  <AdUnit
+                    slotId={import.meta.env.VITE_ADSENSE_JOBS_SLOT_ID}
+                    format="horizontal"
+                    className="mt-8"
+                  />
+                </>
               ) : (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">No jobs available at the moment. Check back soon!</p>
