@@ -8,6 +8,9 @@ import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FollowItForm } from "@/components/FollowItForm";
+import { AdUnit } from "@/components/AdUnit";
+import { AffiliateCard } from "@/components/AffiliateCard";
+import { AFFILIATE_RECOMMENDATIONS } from "@/config/affiliates";
 import { marked } from 'marked';
 
 const Article = () => {
@@ -233,6 +236,12 @@ const Article = () => {
               dangerouslySetInnerHTML={{ __html: marked.parse(article.content.sections) }}
             />
 
+            <AdUnit
+              slotId={import.meta.env.VITE_ADSENSE_ARTICLE_SLOT_ID}
+              format="auto"
+              label="Sponsored Advertisement"
+            />
+
             {article.content.conclusion && (
               <div className="mt-12 p-6 rounded-2xl bg-muted border-l-4 border-primary">
                 <div 
@@ -300,6 +309,19 @@ const Article = () => {
             </div>
           </div>
         </article>
+
+        {/* Recommended Developer Resources & Affiliates */}
+        <section className="bg-muted/40 py-12 border-t border-border/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-bold mb-2">Recommended Tech &amp; Career Tools</h2>
+            <p className="text-sm text-muted-foreground mb-6">Hand-picked tools, cloud infrastructure, and resources for engineering leads.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {AFFILIATE_RECOMMENDATIONS.map((affiliate) => (
+                <AffiliateCard key={affiliate.id} item={affiliate} sourcePage={`article_${post.slug || post.id}`} />
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* Related Articles */}
         <section className="bg-muted py-16 animate-fade-in">

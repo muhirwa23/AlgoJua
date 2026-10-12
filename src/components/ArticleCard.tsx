@@ -8,6 +8,7 @@ interface ArticleCardProps {
   image: string;
   slug?: string;
   size?: "small" | "large";
+  isSponsored?: boolean;
 }
 
 const ArticleCard = ({ id, title, category, date, image, slug, size = "small" }: ArticleCardProps) => {
@@ -27,6 +28,11 @@ const ArticleCard = ({ id, title, category, date, image, slug, size = "small" }:
           alt={title}
           className="w-full h-full object-cover transition-opacity"
         />
+        {isSponsored && (
+          <div className="absolute top-3 left-3 bg-purple-600/90 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-md shadow-md">
+            Sponsored Partner
+          </div>
+        )}
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <span className="text-white font-medium text-lg flex items-center gap-2">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { trackEvent } from "@/lib/analytics";
 
 export function FollowItForm() {
   return (
@@ -83,6 +84,9 @@ export function FollowItForm() {
         <form 
           action="https://api.follow.it/subscription-form/N29PcWtOajR4Tzh6MDcvc1JZWGxsd0dWbWZVTVJFZE44TGthdkVSTlRqYnRDSVBMV2dFYk95YXFRNDhBUE1udXJJbkV0a3k3WjB3Q2JrQVppeGlUYUQwK25Oa3REVTVYUFVnWGJ4anIzMml5MERXa1o5RGRnd1dwWTgyeTdGWVF8RzA5aklsWTBHZjd0SXhQNU9wckp6bTdSazFpNlVkVG01bEtvakNZaTNzdz0=/21" 
           method="post"
+          onSubmit={() => {
+            trackEvent("newsletter_signup_start");
+          }}
         >
           <div className="form-preview" style={{ backgroundColor: 'rgb(246, 224, 245)', position: 'relative' }}>
             <div className="preview-heading">

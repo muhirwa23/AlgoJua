@@ -98,18 +98,39 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold mb-4">Cookies and Tracking Technologies</h2>
+            <h2 className="text-2xl font-bold mb-4">Cookies, Analytics &amp; Monetization Technologies</h2>
             <p className="text-muted-foreground mb-4">
-              We use cookies and similar tracking technologies to track activity on our website and store 
-              certain information. You can instruct your browser to refuse all cookies or to indicate when 
-              a cookie is being sent. Default browser settings usually accept cookies.
+              We use essential, analytics, and advertising cookies to operate AlgoJua:
             </p>
-            <h3 className="text-xl font-semibold mb-3 mt-6">Google AdSense and DoubleClick Cookie</h3>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-4">
+              <li><strong>Essential Cookies:</strong> Required for site navigation, security, and storing your consent preferences.</li>
+              <li><strong>Analytics Cookies &amp; Events:</strong> Measure anonymous reader engagement (scroll depth milestones, page views, search usage) to understand popular articles and site performance.</li>
+              <li><strong>Google AdSense &amp; Advertising:</strong> Serve contextual and targeted advertisements. Google uses cookies to display ads based on previous visits to this or other websites.</li>
+            </ul>
             <p className="text-muted-foreground mb-4">
-              Google, as a third-party vendor, uses cookies to serve ads on AlgoJua. Google's use of the DoubleClick cookie enables it and its partners to serve ads to our users based on their visit to our site or other sites on the Internet.
+              You can manage or revoke your consent at any time using the
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.dispatchEvent(new CustomEvent("algojua_open_consent_modal"));
+                }}
+                className="text-primary underline ml-1 font-medium hover:opacity-80"
+              >
+                Cookie Preferences
+              </button> tool in the footer.
             </p>
             <p className="text-muted-foreground mb-4">
-              You may opt out of the use of the DoubleClick Cookie for interest-based advertising by visiting the <a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google Ads Settings</a> web page.
+              You may also opt out of Google interest-based advertising by visiting the <a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google Ads Settings</a>. For traffic originating in the EEA, UK, or Switzerland, Google AdSense uses Google-certified Consent Management Platforms (CMP) adhering to the IAB TCF framework.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold mb-4">Data Retention &amp; Security</h2>
+            <p className="text-muted-foreground mb-4">
+              We retain raw, non-sensitive analytics event logs for a maximum period of 90 days, after which data is stored only in aggregate statistical summaries.
+            </p>
+            <p className="text-muted-foreground">
+              We never store raw IP addresses, full user-agent strings, passwords, or personal financial information in our analytics table. All analytics data is protected behind server-enforced authentication.
             </p>
           </section>
 

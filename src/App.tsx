@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 import CookieConsent from "@/components/CookieConsent";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import Wellness from "./pages/Wellness";
@@ -36,7 +38,9 @@ const App = () => (
       <Analytics />
       <CookieConsent />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AnalyticsTracker />
         <Routes>
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           <Route path="/" element={<Index />} />
           <Route path="/article/:id" element={<Article />} />
           <Route path="/blog/:slug" element={<Article />} />
