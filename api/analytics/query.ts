@@ -6,7 +6,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
-  if (!token || !verifyToken(token)) {
+  if (!token || !(await verifyToken(token))) {
     return res.status(401).json({ error: "Unauthorized access to private analytics" });
   }
 
