@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyToken } from "../auth/login";
+import { verifyToken } from "../auth/login.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Require Authorization Bearer Token
