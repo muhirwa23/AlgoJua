@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { postsApi, type Post } from "@/lib/api";
+import { trackEvent } from "@/lib/analytics";
 
 interface Article {
   id: string;
@@ -43,6 +44,18 @@ const SearchDialog = () => {
       loadPosts();
     }
   }, [open]);
+
+  useEffect(() => {
+    if (query.trim().length >= 3) {
+      const timer = setTimeout(() => {
+        trackEvent("site_search", {
+          query_length: query.trim().length,
+          category: selectedCategory || "all",
+        });
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [query, selectedCategory]);
 
   const articles: Article[] = useMemo(() => 
     posts.map(post => ({
